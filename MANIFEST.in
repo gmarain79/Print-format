@@ -1,0 +1,2 @@
+recursive-include print_pro *.html *.js *.css *.json *.png *.jpg *.jpeg *.svg *.txt
+recursive-exclude * *.pyc

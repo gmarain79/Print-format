@@ -1,0 +1,55 @@
+<style>
+	.quotation-wrap {
+		border: 1px solid #ddd;
+		padding: 30px;
+		margin: 20px;
+	}
+	.q-header {
+		text-align: right;
+		margin-bottom: 40px;
+	}
+	.q-header h1 {
+		font-size: 3em;
+		color: #333;
+		margin: 0;
+	}
+</style>
+
+<div class="quotation-wrap">
+	<div class="q-header">
+		<h1>QUOTATION</h1>
+		<p><strong>Date: {{ doc.get_formatted("transaction_date") }}</strong></p>
+		<p>Valid until: {{ doc.get_formatted("valid_till") or "N/A" }}</p>
+	</div>
+
+	<h3>From: {{ doc.company }}</h3>
+	<hr>
+	<h3>To: {{ doc.customer_name }}</h3>
+
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Item</th>
+				<th class="text-right">Qty</th>
+				<th class="text-right">Rate</th>
+				<th class="text-right">Amount</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for item in doc.items %}
+			<tr>
+				<td>{{ loop.index }}</td>
+				<td>{{ item.item_name }}</td>
+				<td class="text-right">{{ item.qty }}</td>
+				<td class="text-right">{{ doc.get_formatted("rate", item) }}</td>
+				<td class="text-right">{{ doc.get_formatted("amount", item) }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<div class="text-right">
+		<h4>Grand Total: {{ doc.get_formatted("grand_total") }}</h4>
+	</div>
+</div>

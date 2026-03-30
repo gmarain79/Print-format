@@ -1,0 +1,149 @@
+<style>
+	.print-format {
+		background-color: white;
+		padding: 40px;
+		color: #333;
+		font-family: 'Inter', sans-serif;
+	}
+	.header {
+		display: flex;
+		justify-content: space-between;
+		border-bottom: 2px solid #5e72e4;
+		padding-bottom: 20px;
+		margin-bottom: 30px;
+	}
+	.header h1 {
+		margin: 0;
+		color: #5e72e4;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+	}
+	.meta-info {
+		text-align: right;
+	}
+	.invoice-to {
+		margin-bottom: 40px;
+	}
+	.invoice-to h5 {
+		color: #8898aa;
+		text-transform: uppercase;
+		font-size: 11px;
+		margin-bottom: 10px;
+	}
+	.items-table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-bottom: 30px;
+	}
+	.items-table th {
+		background-color: #f6f9fc;
+		text-align: left;
+		padding: 12px;
+		border-bottom: 1px solid #e9ecef;
+		color: #8898aa;
+		font-size: 12px;
+		text-transform: uppercase;
+	}
+	.items-table td {
+		padding: 12px;
+		border-bottom: 1px solid #e9ecef;
+	}
+	.totals-container {
+		display: flex;
+		justify-content: flex-end;
+	}
+	.totals-table {
+		width: 300px;
+	}
+	.totals-table td {
+		padding: 8px 12px;
+	}
+	.totals-table .grand-total {
+		font-weight: bold;
+		color: #5e72e4;
+		font-size: 1.2em;
+		border-top: 2px solid #5e72e4;
+	}
+	.footer {
+		margin-top: 50px;
+		text-align: center;
+		color: #8898aa;
+		font-size: 12px;
+		border-top: 1px solid #e9ecef;
+		padding-top: 20px;
+	}
+</style>
+
+<div class="print-format">
+	<div class="header">
+		<div>
+			<h1>INVOICE</h1>
+			<p><strong>{{ doc.company }}</strong></p>
+		</div>
+		<div class="meta-info">
+			<p><strong>Date:</strong> {{ doc.get_formatted("posting_date") }}</p>
+			<p><strong>No:</strong> {{ doc.name }}</p>
+		</div>
+	</div>
+
+	<div class="invoice-to">
+		<h5>BILL TO</h5>
+		<p><strong>{{ doc.customer_name }}</strong></p>
+		<p>{{ doc.address_display or "" }}</p>
+	</div>
+
+	<table class="items-table">
+		<thead>
+			<tr>
+				<th width="50%">Description</th>
+				<th width="15%" style="text-align: right;">Qty</th>
+				<th width="15%" style="text-align: right;">Rate</th>
+				<th width="20%" style="text-align: right;">Amount</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for item in doc.items %}
+			<tr>
+				<td>
+					<strong>{{ item.item_name }}</strong><br>
+					<small>{{ item.description or "" }}</small>
+				</td>
+				<td style="text-align: right;">{{ item.qty }} {{ item.uom or "" }}</td>
+				<td style="text-align: right;">{{ doc.get_formatted("rate", item) }}</td>
+				<td style="text-align: right;">{{ doc.get_formatted("amount", item) }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<div class="totals-container">
+		<table class="totals-table">
+			<tr>
+				<td>Subtotal</td>
+				<td style="text-align: right;">{{ doc.get_formatted("total") }}</td>
+			</tr>
+			{% for tax in doc.taxes %}
+			{% if tax.tax_amount %}
+			<tr>
+				<td>{{ tax.description }}</td>
+				<td style="text-align: right;">{{ doc.get_formatted("tax_amount", tax) }}</td>
+			</tr>
+			{% endif %}
+			{% endfor %}
+			<tr class="grand-total">
+				<td>Total</td>
+				<td style="text-align: right;">{{ doc.get_formatted("grand_total") }}</td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="footer">
+		<p>Thank you for your business!</p>
+		{% if doc.terms %}
+		<div class="terms">
+			<hr>
+			{{ doc.terms }}
+		</div>
+		{% endif %}
+	</div>
+</div>

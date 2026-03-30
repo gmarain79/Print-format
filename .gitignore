@@ -1,0 +1,16 @@
+*.pyc
+__pycache__/
+*.log
+*.swp
+*.swo
+.DS_Store
+*.pyo
+venv/
+node_modules/
+dist/
+build/
+*.egg-info/
+.env
+site-config.json
+public/
+docs/_build/

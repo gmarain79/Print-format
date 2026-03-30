@@ -1,0 +1,21 @@
+{
+ "custom_format": 1,
+ "disabled": 0,
+ "doc_type": "Quotation",
+ "docstatus": 0,
+ "doctype": "Print Format",
+ "format_data": "{}",
+ "html": null,
+ "idx": 0,
+ "line_break_column": "Read Only",
+ "modified": "2023-10-27 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Print Pro",
+ "name": "Professional Quotation",
+ "owner": "Administrator",
+ "print_format_builder": 0,
+ "print_format_type": "Jinja",
+ "raw_printing": 0,
+ "show_section_headings": 0,
+ "standard": "Yes"
+}
