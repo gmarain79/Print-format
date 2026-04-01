@@ -46,8 +46,12 @@
         <div class="q-company">
             <h4>From</h4>
             <p>{{ doc.company }}</p>
-            <p>{{ frappe.db.get_value('Company', doc.company, 'address_line1') or '' }}</p>
-            <p>{{ frappe.db.get_value('Company', doc.company, 'city') or '' }} {{ frappe.db.get_value('Company', doc.company, 'state') or '' }} {{ frappe.db.get_value('Company', doc.company, 'country') or '' }}</p>
+            {% set company_address = frappe.get_doc('Company', doc.company).company_address %}
+            {% if company_address %}
+                {% set addr = frappe.get_doc('Address', company_address) %}
+                <p>{{ addr.address_line1 or '' }} {{ addr.address_line2 or '' }}</p>
+                <p>{{ addr.city or '' }} {{ addr.state or '' }} {{ addr.country or '' }}</p>
+            {% endif %}
             <p><strong>Phone:</strong> {{ frappe.db.get_value('Company', doc.company, 'phone_no') or '' }}</p>
         </div>
     </div>
