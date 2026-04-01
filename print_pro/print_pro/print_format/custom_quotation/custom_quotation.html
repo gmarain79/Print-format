@@ -1,0 +1,104 @@
+<style>
+    .quotation-wrap {
+        border: 1px solid #252525;
+        padding: 26px;
+        margin: 20px;
+        font-family: "Arial", sans-serif;
+        color: #1a1a1a;
+    }
+    .q-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    .q-header h1 {
+        font-size: 2.6em;
+        margin: 0;
+        color: #003366;
+    }
+    .q-company, .q-customer {
+        width: 48%;
+        margin-top: 14px;
+    }
+    .q-company h4, .q-customer h4 {
+        margin: 0 0 6px 0;
+        text-transform: uppercase;
+        font-size: 0.85em;
+        color: #333;
+    }
+    .q-company p, .q-customer p { margin: 2px 0; }
+    .q-table { width: 100%; border-collapse: collapse; margin-top: 18px; }
+    .q-table th, .q-table td { border: 1px solid #c1c1c1; padding: 8px 10px; }
+    .q-table th { background: #f3f7fb; font-weight: 600; }
+    .text-right { text-align: right; }
+    .total-row td { border-top: 2px solid #333; }
+</style>
+
+<div class="quotation-wrap">
+    <div class="q-header">
+        <div>
+            <h1>QUOTATION</h1>
+            <p><strong>Quotation #: </strong>{{ doc.name }}</p>
+            <p><strong>Date:</strong> {{ doc.get_formatted("transaction_date") }}</p>
+            <p><strong>Valid Till:</strong> {{ doc.get_formatted("valid_till") or "N/A" }}</p>
+        </div>
+        <div class="q-company">
+            <h4>From</h4>
+            <p>{{ doc.company }}</p>
+            <p>{{ frappe.db.get_value('Company', doc.company, 'address_line1') or '' }}</p>
+            <p>{{ frappe.db.get_value('Company', doc.company, 'city') or '' }} {{ frappe.db.get_value('Company', doc.company, 'state') or '' }} {{ frappe.db.get_value('Company', doc.company, 'country') or '' }}</p>
+            <p><strong>Phone:</strong> {{ frappe.db.get_value('Company', doc.company, 'phone_no') or '' }}</p>
+        </div>
+    </div>
+
+    <div class="q-customer">
+        <h4>Bill To</h4>
+        <p><strong>{{ doc.customer_name }}</strong></p>
+        {% if doc.customer_address %}
+            <p>{{ doc.customer_address }}</p>
+        {% endif %}
+        <p><strong>Phone:</strong> {{ doc.contact_display or '' }}</p>
+        <p><strong>Customer ID:</strong> {{ doc.customer }}</p>
+    </div>
+
+    <table class="q-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Description</th>
+                <th class="text-right">Qty</th>
+                <th class="text-right">Unit Price</th>
+                <th class="text-right">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in doc.items %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ item.item_name or item.description }}</td>
+                <td class="text-right">{{ item.qty }}</td>
+                <td class="text-right">{{ item.get_formatted('rate') if item.rate else doc.get_formatted('rate', item) }}</td>
+                <td class="text-right">{{ doc.get_formatted('amount', item) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr class="total-row">
+                <td colspan="4" class="text-right"><strong>Subtotal</strong></td>
+                <td class="text-right">{{ doc.get_formatted('rounded_total') if doc.rounded_total else doc.get_formatted('total') }}</td>
+            </tr>
+            <tr>
+                <td colspan="4" class="text-right"><strong>Tax</strong></td>
+                <td class="text-right">{{ doc.get_formatted('taxes_and_charges') }}</td>
+            </tr>
+            <tr>
+                <td colspan="4" class="text-right"><strong>Grand Total</strong></td>
+                <td class="text-right">{{ doc.get_formatted('grand_total') }}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div style="margin-top: 14px;">
+        <strong>Terms:</strong> {{ doc.terms or 'Standard terms and conditions apply.' }}
+    </div>
+</div>
