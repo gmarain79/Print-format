@@ -23,3 +23,16 @@ override_doctype_class = {
 doctype_js = {
 	"Payment Entry": "public/js/payment_entry.js"
 }
+
+# ─── Fixtures ───────────────────────────────────────────────────────────────
+fixtures = [
+    {
+        "dt": "Report",
+        "filters": [
+            ["name", "in", [
+                "Meezan bank template", 
+                "Meezan bank template(miscellaneous payment)"
+            ]]
+        ]
+    }
+]

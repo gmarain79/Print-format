@@ -1,0 +1,138 @@
+[
+ {
+  "add_total_row": 1,
+  "columns": [],
+  "disable_prepared_report": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [
+   {
+    "default": null,
+    "fieldname": "entry_id",
+    "fieldtype": "Link",
+    "label": "Entry ID",
+    "mandatory": 0,
+    "options": "Journal Entry",
+    "parent": "Meezan bank template",
+    "parentfield": "filters",
+    "parenttype": "Report",
+    "wildcard_filter": 0
+   }
+  ],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": "NE",
+  "modified": "2026-03-27 11:47:06.198062",
+  "module": "Accounts",
+  "name": "Meezan bank template",
+  "prepared_report": 0,
+  "query": "SELECT\r\n    -- Clickable Entry ID link\r\n    je.name AS \"ENTRY ID:Link/Journal Entry:150\",\r\n    jea.iban AS \"ACCOUNT NUMBER:Data:200\",\r\n    jea.party_name AS \"BENE NAME:Data:150\",\r\n    jea.user_remark AS \"CUSTOMER REFERENCE N0:Data:150\",\r\n    jea.debit AS \"TRANS AMOUNT:Currency:120\",\r\n    jea.bank_code AS \"BANK CODE:Data:100\",\r\n    jea.bank_account AS \"BENEFICIARY ACCOUNT TITLE:Data:200\"\r\nFROM\r\n    `tabJournal Entry` je\r\nJOIN\r\n    `tabJournal Entry Account` jea ON je.name = jea.parent\r\nWHERE\r\n    je.docstatus < 2\r\n    AND jea.debit > 0\r\n    AND (%(entry_id)s IS NULL OR je.name IN %(entry_id)s)\r\n",
+  "ref_doctype": "Journal Entry",
+  "reference_report": null,
+  "report_name": "Meezan bank template",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "parent": "Meezan bank template",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Auditor"
+   },
+   {
+    "parent": "Meezan bank template",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Accounts User"
+   },
+   {
+    "parent": "Meezan bank template",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Accounts Manager"
+   },
+   {
+    "parent": "Meezan bank template",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Employee Self Service"
+   },
+   {
+    "parent": "Meezan bank template",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Delete"
+   }
+  ]
+ },
+ {
+  "add_total_row": 1,
+  "columns": [],
+  "disable_prepared_report": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [
+   {
+    "default": null,
+    "fieldname": "entry_id",
+    "fieldtype": "Link",
+    "label": "Entry ID",
+    "mandatory": 0,
+    "options": "Journal Entry",
+    "parent": "Meezan bank template(miscellaneous payment)",
+    "parentfield": "filters",
+    "parenttype": "Report",
+    "wildcard_filter": 0
+   }
+  ],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": "NE",
+  "modified": "2026-03-27 12:27:13.858557",
+  "module": "Accounts",
+  "name": "Meezan bank template(miscellaneous payment)",
+  "prepared_report": 0,
+  "query": "SELECT\r\n    -- Clickable Entry ID link\r\n    je.name AS \"ENTRY ID:Link/Journal Entry:150\",\r\n    jea.iban AS \"ACCOUNT NUMBER:Data:200\",\r\n    jea.party_name AS \"BENE NAME:Data:150\",\r\n    jea.user_remark AS \"CUSTOMER REFERENCE N0:Data:150\",\r\n    jea.debit AS \"TRANS AMOUNT:Currency:120\",\r\n    jea.bank_code AS \"BANK CODE:Data:100\",\r\n    jea.bank_account AS \"BENEFICIARY ACCOUNT TITLE:Data:200\"\r\nFROM\r\n    `tabJournal Entry` je\r\nJOIN\r\n    `tabJournal Entry Account` jea ON je.name = jea.parent\r\nWHERE\r\n    je.docstatus < 2\r\n    AND jea.debit > 0\r\n    AND (%(entry_id)s IS NULL OR je.name IN %(entry_id)s)\r\n",
+  "ref_doctype": "Journal Entry",
+  "reference_report": null,
+  "report_name": "Meezan bank template(miscellaneous payment)",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "parent": "Meezan bank template(miscellaneous payment)",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Auditor"
+   },
+   {
+    "parent": "Meezan bank template(miscellaneous payment)",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Accounts User"
+   },
+   {
+    "parent": "Meezan bank template(miscellaneous payment)",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Accounts Manager"
+   },
+   {
+    "parent": "Meezan bank template(miscellaneous payment)",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Employee Self Service"
+   },
+   {
+    "parent": "Meezan bank template(miscellaneous payment)",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Delete"
+   }
+  ]
+ }
+]
