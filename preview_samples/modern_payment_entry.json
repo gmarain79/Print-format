@@ -1,0 +1,37 @@
+{
+  "doc": {
+    "company": "Arab App",
+    "letter_head": "Arab App Letter Head",
+    "posting_date": "2026-04-10",
+    "name": "ACC-PAY-2026-00052",
+    "currency": "SAR",
+    "payment_type": "Pay",
+    "party_type": "Supplier",
+    "party": "TechWholesale Ltd",
+    "party_name": "TechWholesale Solutions Limited",
+    "mode_of_payment": "Bank Transfer",
+    "reference_no": "TRX-992211",
+    "reference_date": "2026-04-10",
+    "paid_amount": 33923.85,
+    "received_amount": 33923.85,
+    "remarks": "Payment for Huawei S220 Switch and APs installation.",
+    "references": [
+      {
+        "reference_doctype": "Purchase Invoice",
+        "reference_name": "PINV-2026-00001",
+        "total_amount": 33923.85,
+        "allocated_amount": 33923.85
+      }
+    ]
+  },
+  "linked_docs": {
+    "Letter Head": { "Arab App Letter Head": { "image": "", "content": "" } },
+    "Company": {
+      "Arab App": {
+        "email": "finance@arabapp.com.sa",
+        "tax_id": "310175397400003"
+      }
+    }
+  },
+  "db_values": { "Company::Arab App::default_letter_head": "Arab App Letter Head" }
+}

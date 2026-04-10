@@ -1,0 +1,204 @@
+{# ================================================================
+   MODERN PAYMENT ENTRY — Print Pro
+   DocType : Payment Entry
+   Layout  : Arab App style | no_letterhead = 1
+   Theme   : Amber / Gold
+   ================================================================ #}
+
+{% set company_doc = frappe.get_doc("Company", doc.company) if doc.company else None %}
+{% set lh_name = doc.letter_head if doc.letter_head else (frappe.db.get_value("Company", doc.company, "default_letter_head") if doc.company else None) %}
+{% set lh = frappe.get_doc("Letter Head", lh_name) if lh_name else None %}
+{% set co_addr_name = company_doc.company_address if company_doc and company_doc.get("company_address") else None %}
+{% set co_addr = frappe.get_doc("Address", co_addr_name) if co_addr_name else None %}
+
+{# Party Info #}
+{% set party_addr = frappe.get_doc("Address", doc.party_address) if doc.party_address else None %}
+
+{# Items padding #}
+{% set min_rows = 5 %}
+{% set row_count = doc.references | length %}
+{% set pad_rows = [min_rows - row_count, 0] | max %}
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.pf-wrap {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 11px;
+    color: #1a1a2e;
+    background: #fff;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 24px 28px 0;
+}
+
+/* Header */
+.pf-header { display: table; width: 100%; margin-bottom: 16px; }
+.pf-header-left, .pf-header-right { display: table-cell; vertical-align: middle; }
+.pf-header-left { width: 60%; }
+.pf-header-right { width: 40%; text-align: right; }
+.pf-logo img { max-height: 60px; max-width: 200px; object-fit: contain; }
+.pf-logo .pf-company-name { font-size: 22px; font-weight: 700; color: #1a1a2e; }
+.pf-doc-title { font-size: 22px; font-weight: 700; color: #b78a00; letter-spacing: 2px; text-transform: uppercase; }
+
+/* Dividers */
+.pf-divider { border: none; border-top: 2px solid #b78a00; margin: 8px 0 12px; }
+.pf-divider-thin { border: none; border-top: 1px solid #d0d0d0; margin: 10px 0; }
+
+/* Meta Strip */
+.pf-meta-strip { display: table; width: 100%; margin-bottom: 14px; border: 1px solid #d5d5d5; }
+.pf-meta-cell { display: table-cell; padding: 7px 12px; border-right: 1px solid #d5d5d5; vertical-align: middle; width: 25%; }
+.pf-meta-cell:last-child { border-right: none; }
+.pf-meta-label { font-size: 9px; color: #888; text-transform: uppercase; margin-bottom: 2px; }
+.pf-meta-value { font-weight: 700; font-size: 11px; color: #1a1a2e; }
+
+/* Party Cards */
+.pf-parties { display: table; width: 100%; margin-bottom: 14px; }
+.pf-party-card { display: table-cell; width: 50%; vertical-align: top; padding: 10px 12px; border: 1px solid #d5d5d5; }
+.pf-party-card:first-child { border-right: none; }
+.pf-party-badge { display: inline-block; background: #b78a00; color: #fff; font-size: 8.5px; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; margin-bottom: 6px; }
+.pf-party-name { font-size: 13px; font-weight: 700; color: #1a1a2e; margin-bottom: 5px; }
+.pf-party-row { display: table; width: 100%; line-height: 1.7; font-size: 10.5px; }
+.pf-party-row-label { display: table-cell; color: #555; width: 85px; vertical-align: top; }
+.pf-party-row-value { display: table-cell; color: #1a1a2e; font-weight: 500; }
+
+/* Items Table (References) */
+.pf-items-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+.pf-items-table thead tr { background: #b78a00; color: #fff; }
+.pf-items-table th { padding: 7px 8px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; border: 1px solid #b78a00; }
+.pf-items-table td { padding: 5px 8px; border: 1px solid #ddd; vertical-align: top; height: 18px; }
+.pf-items-table .col-num { width: 4%; text-align: center; }
+.pf-items-table .col-right { text-align: right; }
+
+/* Totals */
+.pf-bottom { display: table; width: 100%; margin: 14px 0; }
+.pf-bottom-left, .pf-bottom-right { display: table-cell; vertical-align: top; }
+.pf-bottom-left { width: 60%; padding-right: 16px; }
+.pf-bottom-right { width: 40%; }
+.pf-grand-box { background: #1a1a2e; color: #fff; padding: 12px 15px; text-align: right; border-radius: 2px; }
+.pf-grand-lbl { font-size: 9px; text-transform: uppercase; color: #aaa; margin-bottom: 3px; }
+.pf-grand-val { font-size: 20px; font-weight: 700; color: #fff; }
+
+/* Payment Details */
+.pf-details-box { border: 1px solid #d5d5d5; padding: 10px 12px; background: #fafafa; }
+.pf-details-title { font-size: 9px; font-weight: 700; color: #b78a00; text-transform: uppercase; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 3px; }
+
+/* Footer */
+.pf-footer { background: #1a1a2e; color: #ccc; text-align: center; padding: 10px; font-size: 9px; margin-top: 18px; width: 100%; }
+</style>
+
+<div class="pf-wrap">
+
+    <div class="pf-header">
+        <div class="pf-header-left">
+            <div class="pf-logo">
+                {% if lh and lh.image %}<img src="{{ lh.image }}" alt="{{ doc.company }}">
+                {% else %}<div class="pf-company-name">{{ doc.company or "Company" }}</div>{% endif %}
+            </div>
+        </div>
+        <div class="pf-header-right">
+            <div class="pf-doc-title">Payment Voucher</div>
+        </div>
+    </div>
+
+    <hr class="pf-divider">
+
+    <div class="pf-meta-strip">
+        <div class="pf-meta-cell"><div class="pf-meta-label">Voucher No.</div><div class="pf-meta-value">{{ doc.name }}</div></div>
+        <div class="pf-meta-cell"><div class="pf-meta-label">Date</div><div class="pf-meta-value">{{ doc.get_formatted("posting_date") }}</div></div>
+        <div class="pf-meta-cell"><div class="pf-meta-label">Type</div><div class="pf-meta-value">{{ doc.payment_type }}</div></div>
+        <div class="pf-meta-cell"><div class="pf-meta-label">Currency</div><div class="pf-meta-value">{{ doc.currency }}</div></div>
+    </div>
+
+    <div class="pf-parties">
+        <div class="pf-party-card">
+            <div class="pf-party-badge">Account Party</div>
+            <div class="pf-party-name">{{ doc.party_name or doc.party }}</div>
+            <div class="pf-party-row"><div class="pf-party-row-label">Party Type:</div><div class="pf-party-row-value">{{ doc.party_type }}</div></div>
+            {% if party_addr and party_addr.email_id %}
+            <div class="pf-party-row"><div class="pf-party-row-label">Email:</div><div class="pf-party-row-value">{{ party_addr.email_id }}</div></div>
+            {% endif %}
+        </div>
+        <div class="pf-party-card">
+            <div class="pf-party-badge">Issued By</div>
+            <div class="pf-party-name">{{ doc.company }}</div>
+            {% if company_doc and company_doc.email %}
+            <div class="pf-party-row"><div class="pf-party-row-label">Email:</div><div class="pf-party-row-value">{{ company_doc.email }}</div></div>
+            {% endif %}
+            {% if company_doc and company_doc.tax_id %}
+            <div class="pf-party-row"><div class="pf-party-row-label">VAT No.:</div><div class="pf-party-row-value">{{ company_doc.tax_id }}</div></div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="pf-details-box">
+        <div class="pf-details-title">Payment Details</div>
+        <div style="display:table;width:100%;">
+            <div style="display:table-cell;width:33%;">
+                <div class="pf-party-row"><div class="pf-party-row-label">Mode:</div><div class="pf-party-row-value">{{ doc.mode_of_payment }}</div></div>
+            </div>
+            <div style="display:table-cell;width:33%;">
+                <div class="pf-party-row"><div class="pf-party-row-label">Ref. No:</div><div class="pf-party-row-value">{{ doc.reference_no or "-" }}</div></div>
+            </div>
+            <div style="display:table-cell;width:33%;">
+                <div class="pf-party-row"><div class="pf-party-row-label">Ref. Date:</div><div class="pf-party-row-value">{{ doc.get_formatted("reference_date") if doc.reference_date else "-" }}</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;">
+        <table class="pf-items-table">
+            <thead>
+                <tr>
+                    <th class="col-num">#</th>
+                    <th>Reference Type</th>
+                    <th>Reference Name</th>
+                    <th class="col-right">Total Amount</th>
+                    <th class="col-right">Paid/Received</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ref in doc.references %}
+                <tr>
+                    <td class="col-num">{{ loop.index }}</td>
+                    <td>{{ ref.reference_doctype }}</td>
+                    <td>{{ ref.reference_name }}</td>
+                    <td class="col-right">{{ doc.currency }} {{ "{:,.2f}".format(ref.total_amount) }}</td>
+                    <td class="col-right">{{ doc.currency }} {{ "{:,.2f}".format(ref.allocated_amount) }}</td>
+                </tr>
+                {% endfor %}
+                {% if not doc.references %}
+                <tr>
+                    <td class="col-num">1</td>
+                    <td colspan="2">On Account Payment</td>
+                    <td class="col-right">-</td>
+                    <td class="col-right">{{ doc.currency }} {{ "{:,.2f}".format(doc.paid_amount) }}</td>
+                </tr>
+                {% endif %}
+                {% for _ in range(pad_rows) %}
+                <tr><td class="col-num">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pf-bottom">
+        <div class="pf-bottom-left">
+            {% if doc.remarks %}
+            <div class="pf-terms-title">Remarks / Instructions</div>
+            <div class="pf-terms-body">{{ doc.remarks }}</div>
+            {% endif %}
+        </div>
+        <div class="pf-bottom-right">
+            <div class="pf-grand-box">
+                <div class="pf-grand-lbl">Total Payment Amount</div>
+                <div class="pf-grand-val">{{ doc.currency }} {{ "{:,.2f}".format(doc.paid_amount) }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pf-footer">
+        <strong>{{ doc.company }}</strong> | VAT: {{ company_doc.tax_id or "-" }} | Email: {{ company_doc.email or "-" }}
+    </div>
+
+</div>
