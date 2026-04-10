@@ -1,0 +1,102 @@
+{
+  "doc": {
+    "company": "Arab App",
+    "letter_head": "Arab App Letter Head",
+    "transaction_date": "2026-04-05",
+    "valid_till": "2026-05-05",
+    "name": "QTN-2026-00046",
+    "currency": "SAR",
+    "quotation_to": "Customer",
+    "party_name": "Intelligent Productivity Co",
+    "customer_name": "شركة الإنتاجية الذكية لتقنية المعلومات",
+    "customer_address": "CUST-ADDR-001",
+    "net_total": 62000.00,
+    "total_taxes_and_charges": 9300.00,
+    "grand_total": 71300.00,
+    "terms": "Quotation valid for 30 days from issue date.\n50% advance payment required before project commencement.\nAll prices are in Saudi Riyals (SAR) and exclude VAT unless stated.\nDelivery and installation timelines will be confirmed upon order confirmation.\nAll items are subject to availability at time of order.",
+    "items": [
+      {
+        "idx": 1,
+        "item_code": "VMWARE-LIC-001",
+        "item_name": "VMware vSphere Enterprise Plus",
+        "description": "Per CPU license with vCenter Server Standard",
+        "item_group": "Products",
+        "qty": 4,
+        "uom": "Nos",
+        "rate": 9500.00,
+        "amount": 38000.00
+      },
+      {
+        "idx": 2,
+        "item_code": "DELL-SVR-001",
+        "item_name": "Dell PowerEdge R750 Server",
+        "description": "2U rack server, Dual Xeon Gold, 256GB RAM, 10TB storage",
+        "item_group": "Hardware",
+        "qty": 2,
+        "uom": "Nos",
+        "rate": 9500.00,
+        "amount": 19000.00
+      },
+      {
+        "idx": 3,
+        "item_code": "SVC-VMIG-001",
+        "item_name": "Virtual Migration & Configuration",
+        "description": "Full migration of existing VMs to new infrastructure",
+        "item_group": "Services",
+        "qty": 1,
+        "uom": "Nos",
+        "rate": 5000.00,
+        "amount": 5000.00
+      }
+    ],
+    "taxes": [
+      {
+        "description": "VAT 15%",
+        "tax_amount": 9300.00
+      }
+    ]
+  },
+  "linked_docs": {
+    "Letter Head": {
+      "Arab App Letter Head": {
+        "image": "",
+        "content": ""
+      }
+    },
+    "Company": {
+      "Arab App": {
+        "company_address": "COMP-ADDR-001",
+        "phone_no": "+966 56 927 5518",
+        "email": "info@arabapp.com.sa",
+        "tax_id": "310175397400003",
+        "city": "Riyadh, Kingdom Of Saudi Arabia"
+      }
+    },
+    "Address": {
+      "COMP-ADDR-001": {
+        "address_line1": "Riyadh",
+        "city": "Riyadh",
+        "state": "Riyadh Region",
+        "county": "7037202760"
+      },
+      "CUST-ADDR-001": {
+        "address_line1": "King Fahd Road",
+        "city": "Riyadh",
+        "state": "Riyadh Region",
+        "phone": "+966 11 987 6543",
+        "email_id": "procurement@company.sa"
+      }
+    },
+    "Customer": {
+      "Intelligent Productivity Co": {
+        "tax_id": "311234567800003",
+        "custom_cr_number": "1009184064"
+      }
+    },
+    "Bank Account": {}
+  },
+  "db_values": {
+    "Company::Arab App::default_letter_head": "Arab App Letter Head",
+    "Customer::Intelligent Productivity Co::custom_cr_number": "1009184064"
+  }
+}

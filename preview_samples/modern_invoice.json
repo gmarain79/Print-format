@@ -1,0 +1,123 @@
+{
+  "doc": {
+    "company": "Arab App",
+    "letter_head": "Arab App Letter Head",
+    "posting_date": "2026-03-29",
+    "due_date": "2026-03-29",
+    "name": "ACC-SINV-2026-00011",
+    "currency": "SAR",
+    "customer": "Intelligent Productivity Co",
+    "customer_name": "شركة الإنتاجية الذكية لتقنية المعلومات",
+    "customer_address": "CUST-ADDR-001",
+    "net_total": 29499.00,
+    "total_taxes_and_charges": 4424.85,
+    "grand_total": 33923.85,
+    "terms": "This invoice is issued for a one-time supply and implementation of hardware, software licenses, and related services.\nPayment is due in full as per the invoice due date. No work commencement or delivery may proceed until payment is received.\nInstallation and implementation services cover only the scope mentioned in this invoice.\nSoftware licenses are subject to vendor terms and conditions and are non-refundable once activated.\nWarranty for hardware is provided as per the manufacturer's standard warranty policy.",
+    "items": [
+      {
+        "idx": 1,
+        "item_code": "SW-HW-001",
+        "item_name": "Switch Huawei 48 ports S220-48P4X 980123/8 Switch",
+        "description": "(48*10/100/1000BASE-T ports(370W PoE+) 4*10GE SFP)",
+        "item_group": "Hardware",
+        "qty": 1,
+        "uom": "Nos",
+        "rate": 2889.00,
+        "amount": 2889.00
+      },
+      {
+        "idx": 2,
+        "item_code": "AP-HW-001",
+        "item_name": "Huawei Access Point AP36 EKIT ENGIN",
+        "description": "",
+        "item_group": "Products",
+        "qty": 3,
+        "uom": "Nos",
+        "rate": 370.00,
+        "amount": 1110.00
+      },
+      {
+        "idx": 3,
+        "item_code": "MS-LIC-001",
+        "item_name": "Microsoft Business Premium",
+        "description": "",
+        "item_group": "Products",
+        "qty": 20,
+        "uom": "Nos",
+        "rate": 1000.00,
+        "amount": 20000.00
+      },
+      {
+        "idx": 4,
+        "item_code": "SVC-IMPL-001",
+        "item_name": "Hardware Implementation and Installation",
+        "description": "",
+        "item_group": "Services",
+        "qty": 1,
+        "uom": "Nos",
+        "rate": 4000.00,
+        "amount": 4000.00
+      },
+      {
+        "idx": 5,
+        "item_code": "CTRL-HW-001",
+        "item_name": "Huawei controller Hardware",
+        "description": "",
+        "item_group": "Products",
+        "qty": 1,
+        "uom": "Nos",
+        "rate": 1500.00,
+        "amount": 1500.00
+      }
+    ],
+    "taxes": [
+      {
+        "description": "Total VAT",
+        "tax_amount": 4424.85
+      }
+    ]
+  },
+  "linked_docs": {
+    "Letter Head": {
+      "Arab App Letter Head": {
+        "image": "",
+        "content": ""
+      }
+    },
+    "Company": {
+      "Arab App": {
+        "company_address": "COMP-ADDR-001",
+        "phone_no": "+966 56 927 5518",
+        "email": "majed.dendini@arabapp.com.sa",
+        "tax_id": "310175397400003",
+        "city": "Riyadh, Kingdom Of Saudi Arabia"
+      }
+    },
+    "Address": {
+      "COMP-ADDR-001": {
+        "address_line1": "Riyadh",
+        "city": "Riyadh",
+        "state": "Riyadh Region",
+        "county": "7037202760"
+      },
+      "CUST-ADDR-001": {
+        "address_line1": "Al Olaya District",
+        "city": "Riyadh",
+        "state": "Riyadh Region",
+        "phone": "-",
+        "email_id": "-"
+      }
+    },
+    "Customer": {
+      "Intelligent Productivity Co": {
+        "tax_id": "",
+        "custom_cr_number": "1009184064"
+      }
+    },
+    "Bank Account": {}
+  },
+  "db_values": {
+    "Company::Arab App::default_letter_head": "Arab App Letter Head",
+    "Customer::Intelligent Productivity Co::custom_cr_number": "1009184064"
+  }
+}

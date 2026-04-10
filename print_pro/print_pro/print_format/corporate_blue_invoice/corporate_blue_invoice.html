@@ -1,8 +1,8 @@
 {# ================================================================
-   PROFESSIONAL QUOTATION — Print Pro
-   DocType : Quotation
+   CORPORATE BLUE INVOICE — Print Pro
+   DocType : Sales Invoice
    Layout  : Arab App style | no_letterhead = 1
-   Theme   : Deep forest green / professional
+   Theme   : Deep navy / corporate blue
    ================================================================ #}
 
 {% set company_doc = frappe.get_doc("Company", doc.company) if doc.company else None %}
@@ -10,9 +10,8 @@
 {% set lh = frappe.get_doc("Letter Head", lh_name) if lh_name else None %}
 {% set co_addr_name = company_doc.company_address if company_doc and company_doc.get("company_address") else None %}
 {% set co_addr = frappe.get_doc("Address", co_addr_name) if co_addr_name else None %}
-{% set party_name = doc.party_name or doc.customer_name or doc.lead_name or "" %}
 {% set cust_addr = frappe.get_doc("Address", doc.customer_address) if doc.customer_address else None %}
-{% set cust_doc = frappe.get_doc("Customer", doc.party_name) if doc.quotation_to == "Customer" and doc.party_name else None %}
+{% set cust_doc = frappe.get_doc("Customer", doc.customer) if doc.customer else None %}
 {% set bank_accounts = frappe.get_all("Bank Account", filters={"company": doc.company, "is_company_account": 1}, fields=["name", "bank", "iban", "account_name"], limit=1) %}
 {% set bank = bank_accounts[0] if bank_accounts else None %}
 {% set min_rows = 8 %}
@@ -25,44 +24,49 @@
 .pf-wrap {
     font-family: 'Segoe UI', Arial, sans-serif;
     font-size: 11px;
-    color: #0f1f0f;
+    color: #0d1b2a;
     background: #fff;
     max-width: 820px;
     margin: 0 auto;
     padding: 24px 28px 0;
 }
 
+/* Header */
 .pf-header { display: table; width: 100%; margin-bottom: 16px; }
 .pf-header-left, .pf-header-right { display: table-cell; vertical-align: middle; }
 .pf-header-left { width: 60%; }
 .pf-header-right { width: 40%; text-align: right; }
 .pf-logo img { max-height: 60px; max-width: 200px; object-fit: contain; }
-.pf-logo .pf-company-name { font-size: 22px; font-weight: 700; color: #0f1f0f; }
-.pf-doc-title { font-size: 22px; font-weight: 700; color: #1a5c2a; letter-spacing: 2px; text-transform: uppercase; }
+.pf-logo .pf-company-name { font-size: 22px; font-weight: 700; color: #0d1b2a; }
+.pf-doc-title { font-size: 22px; font-weight: 700; color: #1a3c6e; letter-spacing: 2px; text-transform: uppercase; }
 
-.pf-divider { border: none; border-top: 2px solid #1a5c2a; margin: 8px 0 12px; }
+/* Dividers */
+.pf-divider { border: none; border-top: 2px solid #1a3c6e; margin: 8px 0 12px; }
 .pf-divider-thin { border: none; border-top: 1px solid #d0d0d0; margin: 10px 0; }
 
+/* Meta Strip */
 .pf-meta-strip { display: table; width: 100%; margin-bottom: 14px; border: 1px solid #d5d5d5; }
 .pf-meta-cell { display: table-cell; padding: 7px 12px; border-right: 1px solid #d5d5d5; vertical-align: middle; width: 25%; }
 .pf-meta-cell:last-child { border-right: none; }
 .pf-meta-label { font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
-.pf-meta-value { font-weight: 700; font-size: 11px; color: #0f1f0f; }
+.pf-meta-value { font-weight: 700; font-size: 11px; color: #0d1b2a; }
 
+/* Seller/Buyer */
 .pf-parties { display: table; width: 100%; margin-bottom: 14px; }
 .pf-party-card { display: table-cell; width: 50%; vertical-align: top; padding: 10px 12px; border: 1px solid #d5d5d5; }
 .pf-party-card:first-child { border-right: none; }
-.pf-party-badge { display: inline-block; background: #1a5c2a; color: #fff; font-size: 8.5px; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; margin-bottom: 6px; letter-spacing: 0.8px; }
-.pf-party-name { font-size: 13px; font-weight: 700; color: #0f1f0f; margin-bottom: 5px; }
+.pf-party-badge { display: inline-block; background: #1a3c6e; color: #fff; font-size: 8.5px; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; margin-bottom: 6px; letter-spacing: 0.8px; }
+.pf-party-name { font-size: 13px; font-weight: 700; color: #0d1b2a; margin-bottom: 5px; }
 .pf-party-row { display: table; width: 100%; line-height: 1.7; font-size: 10.5px; }
 .pf-party-row-label { display: table-cell; color: #555; width: 70px; vertical-align: top; }
-.pf-party-row-value { display: table-cell; color: #0f1f0f; font-weight: 500; }
+.pf-party-row-value { display: table-cell; color: #0d1b2a; font-weight: 500; }
 
+/* Items Table */
 .pf-items-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
-.pf-items-table thead tr { background: #1a5c2a; color: #fff; }
-.pf-items-table th { padding: 7px 8px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #1a5c2a; }
+.pf-items-table thead tr { background: #1a3c6e; color: #fff; }
+.pf-items-table th { padding: 7px 8px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #1a3c6e; }
 .pf-items-table td { padding: 5px 8px; border: 1px solid #ddd; vertical-align: top; height: 20px; }
-.pf-items-table tbody tr:nth-child(even) { background: #f4fbf5; }
+.pf-items-table tbody tr:nth-child(even) { background: #f5f7fb; }
 .pf-items-table .col-num  { width: 4%;  text-align: center; }
 .pf-items-table .col-desc { width: 38%; }
 .pf-items-table .col-type { width: 14%; text-align: center; }
@@ -70,27 +74,32 @@
 .pf-items-table .col-rate { width: 17%; text-align: right; }
 .pf-items-table .col-amt  { width: 17%; text-align: right; }
 
+/* Bottom */
 .pf-bottom { display: table; width: 100%; margin-bottom: 14px; }
 .pf-bottom-left, .pf-bottom-right { display: table-cell; vertical-align: top; }
 .pf-bottom-left { width: 55%; padding-right: 16px; }
 .pf-bottom-right { width: 45%; }
 
+/* Totals */
 .pf-totals-table { width: 100%; border-collapse: collapse; }
 .pf-totals-table td { padding: 5px 10px; border: 1px solid #ddd; font-size: 11px; }
 .pf-totals-table .lbl { color: #555; }
 .pf-totals-table .amt { text-align: right; font-weight: 600; background: #f4f4f4; }
-.pf-totals-grand td { background: #1a5c2a !important; color: #fff !important; font-weight: 700 !important; border-color: #1a5c2a !important; }
+.pf-totals-grand td { background: #1a3c6e !important; color: #fff !important; font-weight: 700 !important; border-color: #1a3c6e !important; }
 
-.pf-terms-title { display: inline-block; background: #f2fbf4; border-left: 3px solid #1a5c2a; padding: 3px 8px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; color: #1a5c2a; margin-bottom: 6px; letter-spacing: 0.5px; }
+/* Terms */
+.pf-terms-title { display: inline-block; background: #eef2f9; border-left: 3px solid #1a3c6e; padding: 3px 8px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; color: #1a3c6e; margin-bottom: 6px; letter-spacing: 0.5px; }
 .pf-terms-body { font-size: 9.5px; color: #444; line-height: 1.6; }
 
+/* Banking */
 .pf-banking { margin-top: 10px; }
-.pf-banking-title { font-size: 11px; font-weight: 700; color: #0f1f0f; margin-bottom: 4px; }
+.pf-banking-title { font-size: 11px; font-weight: 700; color: #0d1b2a; margin-bottom: 4px; }
 .pf-banking-body { font-size: 10.5px; color: #444; line-height: 1.8; }
-.pf-banking-body strong { color: #0f1f0f; }
+.pf-banking-body strong { color: #0d1b2a; }
 
-.pf-footer { background: #0f1f0f; color: #ccc; padding: 10px 20px; font-size: 9.5px; margin-top: 18px; display: table; width: 100%; }
-.pf-footer-cell { display: table-cell; text-align: center; vertical-align: middle; padding: 0 10px; border-right: 1px solid #2a4a2a; }
+/* Footer */
+.pf-footer { background: #0d1b2a; color: #ccc; padding: 10px 20px; font-size: 9.5px; margin-top: 18px; display: table; width: 100%; }
+.pf-footer-cell { display: table-cell; text-align: center; vertical-align: middle; padding: 0 10px; border-right: 1px solid #2a3c5e; }
 .pf-footer-cell:last-child { border-right: none; }
 .pf-footer-cell strong { color: #fff; display: block; margin-bottom: 1px; }
 </style>
@@ -108,7 +117,7 @@
             </div>
         </div>
         <div class="pf-header-right">
-            <div class="pf-doc-title">Quotation</div>
+            <div class="pf-doc-title">Sales Invoice</div>
         </div>
     </div>
 
@@ -116,16 +125,16 @@
 
     <div class="pf-meta-strip">
         <div class="pf-meta-cell">
-            <div class="pf-meta-label">Quotation No.</div>
+            <div class="pf-meta-label">Invoice No.</div>
             <div class="pf-meta-value">{{ doc.name }}</div>
         </div>
         <div class="pf-meta-cell">
             <div class="pf-meta-label">Date</div>
-            <div class="pf-meta-value">{{ doc.get_formatted("transaction_date") }}</div>
+            <div class="pf-meta-value">{{ doc.get_formatted("posting_date") }}</div>
         </div>
         <div class="pf-meta-cell">
-            <div class="pf-meta-label">Valid Till</div>
-            <div class="pf-meta-value">{{ doc.get_formatted("valid_till") if doc.valid_till else "-" }}</div>
+            <div class="pf-meta-label">Due Date</div>
+            <div class="pf-meta-value">{{ doc.get_formatted("due_date") if doc.due_date else "-" }}</div>
         </div>
         <div class="pf-meta-cell">
             <div class="pf-meta-label">Currency</div>
@@ -135,7 +144,7 @@
 
     <div class="pf-parties">
         <div class="pf-party-card">
-            <div class="pf-party-badge">From</div>
+            <div class="pf-party-badge">Seller</div>
             <div class="pf-party-name">{{ doc.company }}</div>
             {% if company_doc and company_doc.email %}
             <div class="pf-party-row"><div class="pf-party-row-label">Email:</div><div class="pf-party-row-value">{{ company_doc.email }}</div></div>
@@ -151,8 +160,8 @@
             {% endif %}
         </div>
         <div class="pf-party-card">
-            <div class="pf-party-badge">To</div>
-            <div class="pf-party-name">{{ party_name }}</div>
+            <div class="pf-party-badge">Buyer</div>
+            <div class="pf-party-name">{{ doc.customer_name }}</div>
             {% if cust_addr and cust_addr.email_id %}
             <div class="pf-party-row"><div class="pf-party-row-label">Email:</div><div class="pf-party-row-value">{{ cust_addr.email_id }}</div></div>
             {% endif %}
@@ -162,7 +171,7 @@
             {% if cust_doc and cust_doc.tax_id %}
             <div class="pf-party-row"><div class="pf-party-row-label">VAT No.:</div><div class="pf-party-row-value">{{ cust_doc.tax_id }}</div></div>
             {% endif %}
-            {% set cust_cr = frappe.db.get_value("Customer", doc.party_name, "custom_cr_number") if doc.quotation_to == "Customer" and doc.party_name else None %}
+            {% set cust_cr = frappe.db.get_value("Customer", doc.customer, "custom_cr_number") if doc.customer else None %}
             {% if cust_cr %}
             <div class="pf-party-row"><div class="pf-party-row-label">CR No.:</div><div class="pf-party-row-value">{{ cust_cr }}</div></div>
             {% endif %}
@@ -235,7 +244,7 @@
                 <tr><td class="lbl">Total VAT</td><td class="amt">{{ doc.currency }} {{ "{:,.2f}".format(doc.total_taxes_and_charges) }}</td></tr>
                 {% endif %}
                 <tr class="pf-totals-grand">
-                    <td>Grand Total</td>
+                    <td>Amount Due</td>
                     <td style="text-align:right;">{{ doc.currency }} {{ "{:,.2f}".format(doc.grand_total) }}</td>
                 </tr>
             </table>

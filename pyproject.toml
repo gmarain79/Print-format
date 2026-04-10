@@ -4,12 +4,12 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "print_pro"
+version = "0.1.0"
 authors = [
     {name = "Antigravity AI", email = "your-email@example.com"}
 ]
-description = "A bundle of pre-configured print formats for easy distribution."
+description = "A bundle of pre-configured, Arab App styled print formats for Frappe / ERPNext."
 readme = "README.md"
-dynamic = ["version"]
 dependencies = [
     "frappe"
 ]

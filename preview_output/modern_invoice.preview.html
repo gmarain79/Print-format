@@ -1,35 +1,30 @@
-{# ================================================================
-   MODERN INVOICE — Print Pro
-   DocType : Sales Invoice
-   Layout  : Arab App style | no_letterhead = 1
-   Phase   : 1 (Base) + 3 (Pilot)
-   ================================================================ #}
 
-{# ── Data Layer ─────────────────────────────────────────────── #}
-{% set company_doc = frappe.get_doc("Company", doc.company) if doc.company else None %}
 
-{# Letter Head: use doc.letter_head, fallback to company default #}
-{% set lh_name = doc.letter_head if doc.letter_head else (frappe.db.get_value("Company", doc.company, "default_letter_head") if doc.company else None) %}
-{% set lh = frappe.get_doc("Letter Head", lh_name) if lh_name else None %}
 
-{# Company Address #}
-{% set co_addr_name = company_doc.company_address if company_doc and company_doc.get("company_address") else None %}
-{% set co_addr = frappe.get_doc("Address", co_addr_name) if co_addr_name else None %}
 
-{# Customer Address #}
-{% set cust_addr = frappe.get_doc("Address", doc.customer_address) if doc.customer_address else None %}
 
-{# Customer doc for VAT / CR #}
-{% set cust_doc = frappe.get_doc("Customer", doc.customer) if doc.customer else None %}
 
-{# Bank Account linked to Company #}
-{% set bank_accounts = frappe.get_all("Bank Account", filters={"company": doc.company, "is_company_account": 1}, fields=["name", "bank", "iban", "account_name"], limit=1) %}
-{% set bank = bank_accounts[0] if bank_accounts else None %}
 
-{# Items padding #}
-{% set min_rows = 8 %}
-{% set item_count = doc.items | length %}
-{% set pad_rows = [min_rows - item_count, 0] | max %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <style>
 /* ── Reset & Base ─────────────────────────────────────────── */
@@ -291,15 +286,13 @@
 
 <div class="pf-wrap">
 
-    {# ── HEADER ──────────────────────────────────────────────── #}
+    
     <div class="pf-header">
         <div class="pf-header-left">
             <div class="pf-logo">
-                {% if lh and lh.image %}
-                    <img src="{{ lh.image }}" alt="{{ doc.company }}">
-                {% else %}
-                    <div class="pf-company-name">{{ doc.company or "Company" }}</div>
-                {% endif %}
+                
+                    <div class="pf-company-name">Arab App</div>
+                
             </div>
         </div>
         <div class="pf-header-right">
@@ -309,93 +302,88 @@
 
     <hr class="pf-divider">
 
-    {# ── META STRIP ──────────────────────────────────────────── #}
+    
     <div class="pf-meta-strip">
         <div class="pf-meta-cell">
             <div class="pf-meta-label">Invoice No.</div>
-            <div class="pf-meta-value">{{ doc.name }}</div>
+            <div class="pf-meta-value">ACC-SINV-2026-00011</div>
         </div>
         <div class="pf-meta-cell">
             <div class="pf-meta-label">Date</div>
-            <div class="pf-meta-value">{{ doc.get_formatted("posting_date") }}</div>
+            <div class="pf-meta-value">03/29/2026</div>
         </div>
         <div class="pf-meta-cell">
             <div class="pf-meta-label">Due Date</div>
-            <div class="pf-meta-value">{{ doc.get_formatted("due_date") if doc.due_date else "-" }}</div>
+            <div class="pf-meta-value">03/29/2026</div>
         </div>
         <div class="pf-meta-cell">
             <div class="pf-meta-label">Currency</div>
-            <div class="pf-meta-value">{{ doc.currency }}</div>
+            <div class="pf-meta-value">SAR</div>
         </div>
     </div>
 
-    {# ── SELLER / BUYER CARDS ────────────────────────────────── #}
+    
     <div class="pf-parties">
-        {# SELLER #}
+        
         <div class="pf-party-card">
             <div class="pf-party-badge">Seller</div>
-            <div class="pf-party-name">{{ doc.company }}</div>
-            {% if company_doc and company_doc.email %}
+            <div class="pf-party-name">Arab App</div>
+            
             <div class="pf-party-row">
                 <div class="pf-party-row-label">Email:</div>
-                <div class="pf-party-row-value">{{ company_doc.email }}</div>
+                <div class="pf-party-row-value">majed.dendini@arabapp.com.sa</div>
             </div>
-            {% endif %}
-            {% if company_doc and company_doc.phone_no %}
+            
+            
             <div class="pf-party-row">
                 <div class="pf-party-row-label">Contact:</div>
-                <div class="pf-party-row-value">{{ company_doc.phone_no }}</div>
+                <div class="pf-party-row-value">+966 56 927 5518</div>
             </div>
-            {% endif %}
-            {% if company_doc and company_doc.tax_id %}
+            
+            
             <div class="pf-party-row">
                 <div class="pf-party-row-label">VAT No.:</div>
-                <div class="pf-party-row-value">{{ company_doc.tax_id }}</div>
+                <div class="pf-party-row-value">310175397400003</div>
             </div>
-            {% endif %}
-            {% if co_addr and co_addr.county %}
+            
+            
             <div class="pf-party-row">
                 <div class="pf-party-row-label">CR No.:</div>
-                <div class="pf-party-row-value">{{ co_addr.county }}</div>
+                <div class="pf-party-row-value">7037202760</div>
             </div>
-            {% endif %}
+            
         </div>
 
-        {# BUYER #}
+        
         <div class="pf-party-card">
             <div class="pf-party-badge">Buyer</div>
-            <div class="pf-party-name">{{ doc.customer_name }}</div>
-            {% if cust_addr and cust_addr.email_id %}
+            <div class="pf-party-name">شركة الإنتاجية الذكية لتقنية المعلومات</div>
+            
             <div class="pf-party-row">
                 <div class="pf-party-row-label">Email:</div>
-                <div class="pf-party-row-value">{{ cust_addr.email_id }}</div>
+                <div class="pf-party-row-value">-</div>
             </div>
-            {% endif %}
-            {% if cust_addr and cust_addr.phone %}
+            
+            
             <div class="pf-party-row">
                 <div class="pf-party-row-label">Contact:</div>
-                <div class="pf-party-row-value">{{ cust_addr.phone }}</div>
+                <div class="pf-party-row-value">-</div>
             </div>
-            {% endif %}
-            {% if cust_doc and cust_doc.tax_id %}
-            <div class="pf-party-row">
-                <div class="pf-party-row-label">VAT No.:</div>
-                <div class="pf-party-row-value">{{ cust_doc.tax_id }}</div>
-            </div>
-            {% endif %}
-            {% if cust_doc %}
-            {% set cust_cr = frappe.db.get_value("Customer", doc.customer, "custom_cr_number") %}
-            {% if cust_cr %}
+            
+            
+            
+            
+            
             <div class="pf-party-row">
                 <div class="pf-party-row-label">CR No.:</div>
-                <div class="pf-party-row-value">{{ cust_cr }}</div>
+                <div class="pf-party-row-value">1009184064</div>
             </div>
-            {% endif %}
-            {% endif %}
+            
+            
         </div>
     </div>
 
-    {# ── ITEMS TABLE ─────────────────────────────────────────── #}
+    
     <table class="pf-items-table">
         <thead>
             <tr>
@@ -408,22 +396,70 @@
             </tr>
         </thead>
         <tbody>
-            {% for item in doc.items %}
+            
             <tr>
-                <td class="col-num">{{ item.idx }}</td>
+                <td class="col-num">1</td>
                 <td class="col-desc">
-                    <strong>{{ item.item_name or item.item_code }}</strong>
-                    {% if item.description and item.description != item.item_name %}
-                    <div style="color:#666;font-size:9.5px;">{{ item.description }}</div>
-                    {% endif %}
+                    <strong>Switch Huawei 48 ports S220-48P4X 980123/8 Switch</strong>
+                    
+                    <div style="color:#666;font-size:9.5px;">(48*10/100/1000BASE-T ports(370W PoE+) 4*10GE SFP)</div>
+                    
                 </td>
-                <td class="col-type">{{ item.item_group or "-" }}</td>
-                <td class="col-qty">{{ item.qty | int }} {{ item.uom or "" }}</td>
-                <td class="col-rate">{{ doc.currency }} {{ "{:,.2f}".format(item.rate) }}</td>
-                <td class="col-amt">{{ doc.currency }} {{ "{:,.2f}".format(item.amount) }}</td>
+                <td class="col-type">Hardware</td>
+                <td class="col-qty">1 Nos</td>
+                <td class="col-rate">SAR 2,889.00</td>
+                <td class="col-amt">SAR 2,889.00</td>
             </tr>
-            {% endfor %}
-            {% for _ in range(pad_rows) %}
+            
+            <tr>
+                <td class="col-num">2</td>
+                <td class="col-desc">
+                    <strong>Huawei Access Point AP36 EKIT ENGIN</strong>
+                    
+                </td>
+                <td class="col-type">Products</td>
+                <td class="col-qty">3 Nos</td>
+                <td class="col-rate">SAR 370.00</td>
+                <td class="col-amt">SAR 1,110.00</td>
+            </tr>
+            
+            <tr>
+                <td class="col-num">3</td>
+                <td class="col-desc">
+                    <strong>Microsoft Business Premium</strong>
+                    
+                </td>
+                <td class="col-type">Products</td>
+                <td class="col-qty">20 Nos</td>
+                <td class="col-rate">SAR 1,000.00</td>
+                <td class="col-amt">SAR 20,000.00</td>
+            </tr>
+            
+            <tr>
+                <td class="col-num">4</td>
+                <td class="col-desc">
+                    <strong>Hardware Implementation and Installation</strong>
+                    
+                </td>
+                <td class="col-type">Services</td>
+                <td class="col-qty">1 Nos</td>
+                <td class="col-rate">SAR 4,000.00</td>
+                <td class="col-amt">SAR 4,000.00</td>
+            </tr>
+            
+            <tr>
+                <td class="col-num">5</td>
+                <td class="col-desc">
+                    <strong>Huawei controller Hardware</strong>
+                    
+                </td>
+                <td class="col-type">Products</td>
+                <td class="col-qty">1 Nos</td>
+                <td class="col-rate">SAR 1,500.00</td>
+                <td class="col-amt">SAR 1,500.00</td>
+            </tr>
+            
+            
             <tr>
                 <td class="col-num">&nbsp;</td>
                 <td class="col-desc">&nbsp;</td>
@@ -432,87 +468,94 @@
                 <td class="col-rate">&nbsp;</td>
                 <td class="col-amt">&nbsp;</td>
             </tr>
-            {% endfor %}
+            
+            <tr>
+                <td class="col-num">&nbsp;</td>
+                <td class="col-desc">&nbsp;</td>
+                <td class="col-type">&nbsp;</td>
+                <td class="col-qty">&nbsp;</td>
+                <td class="col-rate">&nbsp;</td>
+                <td class="col-amt">&nbsp;</td>
+            </tr>
+            
+            <tr>
+                <td class="col-num">&nbsp;</td>
+                <td class="col-desc">&nbsp;</td>
+                <td class="col-type">&nbsp;</td>
+                <td class="col-qty">&nbsp;</td>
+                <td class="col-rate">&nbsp;</td>
+                <td class="col-amt">&nbsp;</td>
+            </tr>
+            
         </tbody>
     </table>
 
-    {# ── BOTTOM: TERMS LEFT, TOTALS RIGHT ────────────────────── #}
+    
     <div class="pf-bottom">
 
-        {# LEFT: Terms & Banking #}
+        
         <div class="pf-bottom-left">
-            {% if doc.terms %}
+            
             <div class="pf-terms-title">Terms &amp; Conditions</div>
-            <div class="pf-terms-body">{{ doc.terms }}</div>
+            <div class="pf-terms-body">This invoice is issued for a one-time supply and implementation of hardware, software licenses, and related services.
+Payment is due in full as per the invoice due date. No work commencement or delivery may proceed until payment is received.
+Installation and implementation services cover only the scope mentioned in this invoice.
+Software licenses are subject to vendor terms and conditions and are non-refundable once activated.
+Warranty for hardware is provided as per the manufacturer's standard warranty policy.</div>
             <hr class="pf-divider-thin">
-            {% endif %}
+            
 
-            {% if bank %}
-            <div class="pf-banking">
-                <div class="pf-banking-title">Banking Details for Payment:</div>
-                <div class="pf-banking-body">
-                    Payments should be made to the following bank account:<br>
-                    <strong>Account Name:</strong> {{ bank.account_name or doc.company }}<br>
-                    <strong>Bank:</strong> {{ bank.bank }}<br>
-                    <strong>IBAN:</strong> {{ bank.iban }}
-                </div>
-            </div>
-            {% endif %}
+            
         </div>
 
-        {# RIGHT: Totals #}
+        
         <div class="pf-bottom-right">
             <table class="pf-totals-table">
                 <tr>
                     <td class="lbl">Subtotal (Excl. VAT)</td>
-                    <td class="amt">{{ doc.currency }} {{ "{:,.2f}".format(doc.net_total) }}</td>
+                    <td class="amt">SAR 29,499.00</td>
                 </tr>
-                {% for tax in doc.taxes %}
-                {% if tax.tax_amount %}
-                <tr>
-                    <td class="lbl">{{ tax.description or "VAT" }}</td>
-                    <td class="amt">{{ doc.currency }} {{ "{:,.2f}".format(tax.tax_amount) }}</td>
-                </tr>
-                {% endif %}
-                {% endfor %}
-                {% if not doc.taxes %}
+                
+                
                 <tr>
                     <td class="lbl">Total VAT</td>
-                    <td class="amt">{{ doc.currency }} {{ "{:,.2f}".format(doc.total_taxes_and_charges) }}</td>
+                    <td class="amt">SAR 4,424.85</td>
                 </tr>
-                {% endif %}
+                
+                
+                
                 <tr class="pf-totals-grand">
                     <td>Amount Due</td>
-                    <td style="text-align:right;">{{ doc.currency }} {{ "{:,.2f}".format(doc.grand_total) }}</td>
+                    <td style="text-align:right;">SAR 33,923.85</td>
                 </tr>
             </table>
         </div>
     </div>
 
-    {# ── FOOTER BAR ──────────────────────────────────────────── #}
+    
     <div class="pf-footer">
         <div class="pf-footer-cell">
-            <strong>{{ doc.company }}</strong>
-            {{ company_doc.city if company_doc and company_doc.get("city") else "" }}
+            <strong>Arab App</strong>
+            Riyadh, Kingdom Of Saudi Arabia
         </div>
-        {% if company_doc and company_doc.tax_id %}
+        
         <div class="pf-footer-cell">
             <strong>VAT No.</strong>
-            {{ company_doc.tax_id }}
+            310175397400003
         </div>
-        {% endif %}
-        {% if company_doc and company_doc.email %}
+        
+        
         <div class="pf-footer-cell">
             <strong>Email</strong>
-            {{ company_doc.email }}
+            majed.dendini@arabapp.com.sa
         </div>
-        {% endif %}
-        {% if company_doc and company_doc.phone_no %}
+        
+        
         <div class="pf-footer-cell">
             <strong>Contact</strong>
-            {{ company_doc.phone_no }}
+            +966 56 927 5518
         </div>
-        {% endif %}
+        
     </div>
 
 </div>
