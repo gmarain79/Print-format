@@ -7,6 +7,7 @@ A bundle of modern, professional print formats for Frappe / ERPNext — styled a
 | Format | DocType | Color Theme |
 |---|---|---|
 | **Modern Invoice** | Sales Invoice | Teal / Cyan |
+| **Modern Sales Order** | Sales Order | Teal / Cyan |
 | **Corporate Blue Invoice** | Sales Invoice | Navy Blue |
 | **Custom Quotation** | Quotation | Burnt Orange |
 | **Professional Quotation** | Quotation | Forest Green |
