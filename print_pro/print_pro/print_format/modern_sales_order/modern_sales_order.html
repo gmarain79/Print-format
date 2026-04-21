@@ -1,41 +1,21 @@
 {# ================================================================
-   CUSTOM QUOTATION — Print Pro
-   DocType : Quotation / Sales Invoice
-   Layout  : Arab App style | no_letterhead = 1
-   Theme   : Warm slate / burnt orange accent
+   MODERN SALES ORDER — Print Pro
+   DocType : Sales Order
+   Theme   : Dark Blue Professional (Sync with Quotation)
    ================================================================ #}
 
-{% set is_qtn = (doc.doctype == "Quotation") %}
 {% set company_doc = frappe.get_doc("Company", doc.company) if doc.company else None %}
 {% set selected_letterhead = frappe.form_dict.letterhead if frappe.form_dict and frappe.form_dict.letterhead else None %}
 {% set lh_name = selected_letterhead if selected_letterhead else (doc.letter_head if doc.letter_head else (frappe.db.get_value("Company", doc.company, "default_letter_head") if doc.company else None)) %}
 {% set lh = frappe.get_doc("Letter Head", lh_name) if lh_name else None %}
 {% set lh_image_src = get_file_data_url(lh.image) if lh and lh.image else None %}
 {% set co_addr_name = company_doc.company_address if company_doc and company_doc.get("company_address") else None %}
-{% if not co_addr_name and doc.company %}
-{% set company_addr_links = frappe.get_all("Dynamic Link", filters={"link_doctype": "Company", "link_name": doc.company, "parenttype": "Address"}, fields=["parent"], limit=1) %}
-{% set co_addr_name = company_addr_links[0].parent if company_addr_links else None %}
-{% endif %}
 {% set co_addr = frappe.get_doc("Address", co_addr_name) if co_addr_name else None %}
-{% set co_addr_parts = [] %}
-{% if co_addr and co_addr.address_line2 %}{% set _ = co_addr_parts.append("Building No." ~ co_addr.address_line2) %}{% endif %}
-{% if co_addr and co_addr.address_line1 %}{% set _ = co_addr_parts.append(co_addr.address_line1) %}{% endif %}
-{% if co_addr and co_addr.state %}{% set _ = co_addr_parts.append(co_addr.state) %}{% endif %}
-{% if co_addr and co_addr.pincode %}{% set _ = co_addr_parts.append(co_addr.pincode) %}{% endif %}
-{% if co_addr and co_addr.country %}{% set _ = co_addr_parts.append(co_addr.country) %}{% endif %}
-{% set co_full_address = ", ".join(co_addr_parts) %}
 
-{# Party Logic #}
-{% set party_name = doc.customer_name or doc.party_name or doc.lead_name or "" %}
+{# Sales Order: customer based #}
+{% set party_name = doc.customer_name or doc.customer or "" %}
 {% set cust_addr = frappe.get_doc("Address", doc.customer_address) if doc.customer_address else None %}
-{% set cust_addr_parts = [] %}
-{% if cust_addr and cust_addr.address_line2 %}{% set _ = cust_addr_parts.append("Building No. " ~ cust_addr.address_line2) %}{% endif %}
-{% if cust_addr and cust_addr.address_line1 %}{% set _ = cust_addr_parts.append(cust_addr.address_line1) %}{% endif %}
-{% if cust_addr and cust_addr.state %}{% set _ = cust_addr_parts.append(cust_addr.state) %}{% endif %}
-{% if cust_addr and cust_addr.pincode %}{% set _ = cust_addr_parts.append(cust_addr.pincode) %}{% endif %}
-{% if cust_addr and cust_addr.country %}{% set _ = cust_addr_parts.append(cust_addr.country) %}{% endif %}
-{% set cust_full_address = ", ".join(cust_addr_parts) %}
-{% set cust_doc = frappe.get_doc("Customer", doc.customer or doc.party_name) if (doc.customer or (is_qtn and doc.quotation_to == "Customer")) else None %}
+{% set cust_doc = frappe.get_doc("Customer", doc.customer) if doc.customer else None %}
 
 {% set bank_accounts = frappe.get_all("Bank Account", filters={"company": doc.company, "is_company_account": 1}, fields=["name", "bank", "iban", "account_name"], limit=1) %}
 {% set bank = bank_accounts[0] if bank_accounts else None %}
@@ -68,13 +48,13 @@ thead { display: table-header-group; }
 tfoot { display: table-footer-group; }
 tr { page-break-inside: avoid; }
 
-/* ── Header Components ── */
+/* ── Header Components (inside thead) ── */
 .pf-header-box { padding: 10px 20px 2px; }
 .pf-header { display: table; width: 100%; padding-bottom: 10px; }
 .pf-header-left, .pf-header-right { display: table-cell; vertical-align: middle; }
 .pf-header-left { width: 60%; }
 .pf-header-right { width: 40%; text-align: right; }
-.pf-logo img { max-height: 80px; max-width: 260px; object-fit: contain; }
+.pf-logo img { max-height: 50px; max-width: 200px; object-fit: contain; }
 .pf-logo .pf-company-name {
     font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     font-size: 24px;
@@ -85,24 +65,6 @@ tr { page-break-inside: avoid; }
     line-height: 1.1;
 }
 .pf-doc-title { font-size: 22px; font-weight: 700; color: #003366; letter-spacing: 2px; text-transform: uppercase; }
-.pf-doc-subhead {
-    display: inline-block;
-    margin-top: 6px;
-    margin-bottom: 6px;
-    text-align: left;
-    white-space: nowrap;
-}
-.pf-doc-subhead > div {
-    display: inline-block;
-    vertical-align: baseline;
-}
-.pf-doc-number {
-    margin-top: 0;
-    margin-left: 8px;
-    font-size: 14px;
-    font-weight: 700;
-    color: #003366;
-}
 
 .pf-divider { border: none; border-top: 2px solid #003366; margin: 4px 0 8px; }
 .pf-divider-thin { border: none; border-top: 1px solid #d0d0d0; margin: 10px 0; }
@@ -112,6 +74,15 @@ tr { page-break-inside: avoid; }
 .pf-meta-cell:last-child { border-right: none; }
 .pf-meta-label { font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
 .pf-meta-value { font-weight: 700; font-size: 11.5px; color: #1c1c1c; }
+.pf-repeat-header { padding: 0 20px 8px; display: none; }
+.pf-repeat-header-main { display: table; width: 100%; padding-bottom: 8px; }
+.pf-repeat-header-main .pf-header-left,
+.pf-repeat-header-main .pf-header-right { display: table-cell; vertical-align: middle; }
+.pf-repeat-header-main .pf-header-left { width: 58%; }
+.pf-repeat-header-main .pf-header-right { width: 42%; text-align: right; }
+.pf-repeat-meta { display: table; width: 100%; border: 1px solid #d5d5d5; }
+.pf-repeat-meta .pf-meta-cell { padding: 5px 10px; }
+
 .pf-parties { display: table; width: 100%; margin-bottom: 12px; }
 .pf-party-card { display: table-cell; width: 50%; vertical-align: top; padding: 8px 12px; border: 1px solid #d5d5d5; }
 .pf-party-card:first-child { border-right: none; }
@@ -122,12 +93,12 @@ tr { page-break-inside: avoid; }
 .pf-party-row-value { display: table-cell; color: #1c1c1c; font-weight: 500; }
 
 /* ── Items Table Styles ── */
-.pf-col-num  { width: 4%; min-width: 24px; max-width: 32px; text-align: center; }
-.pf-col-desc { width: 38%; }
-.pf-col-type { width: 16%; text-align: center; }
-.pf-col-qty  { width: 17%; text-align: center; }
-.pf-col-rate { width: 12.5%; text-align: right; }
-.pf-col-amt  { width: 12.5%; text-align: right; }
+.pf-col-num  { width: 4%;  text-align: center; }
+.pf-col-desc { width: 44%; }
+.pf-col-type { width: 12%; text-align: center; }
+.pf-col-qty  { width: 16%;  text-align: center; }
+.pf-col-rate { width: 12%; text-align: right; }
+.pf-col-amt  { width: 12%; text-align: right; }
 
 .pf-master-table th { 
     background: #003366; 
@@ -143,25 +114,10 @@ tr { page-break-inside: avoid; }
     vertical-align: top; 
     font-size: 11px;
 }
-.pf-item-row td.pf-col-num,
-.pf-master-table th.pf-col-num {
-    width: 4%;
-    min-width: 24px;
-    max-width: 32px;
-    padding-left: 1px;
-    padding-right: 1px;
-    white-space: nowrap;
-}
-.pf-item-row td.pf-col-rate,
-.pf-item-row td.pf-col-amt,
-.pf-master-table th.pf-col-rate,
-.pf-master-table th.pf-col-amt {
-    white-space: nowrap;
-}
 .pf-item-row:nth-child(even) { background: #f4f8fb; }
 
 /* ── Bottom Section ── */
-.pf-terms-title { display: inline-block; background: #fff6f0; border-left: 3px solid #003366; padding: 3px 8px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; color: #003366; margin-bottom: 5px; }
+.pf-terms-title { display: inline-block; background: #f0f5fa; border-left: 3px solid #003366; padding: 3px 8px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; color: #003366; margin-bottom: 5px; }
 .pf-terms-body { font-size: 10px; color: #444; line-height: 1.5; }
 .pf-summary-section { padding: 10px 20px 0; page-break-inside: avoid; break-inside: avoid; }
 .pf-summary-grid { display: table; width: 100%; table-layout: fixed; }
@@ -180,64 +136,44 @@ tr { page-break-inside: avoid; }
 .pf-header-left { width: 60%; }
 .pf-header-right { width: 40%; text-align: right; }
 
-/* .action-banner, .print-preview-actions removed to show PDF buttons */
+/* ── Repeating Footer Box ── */
 .pf-footer-wrap { padding: 0 20px 10px; }
 .pf-footer { background: #1c1c1c; color: #ccc; padding: 12px 18px; font-size: 11px; display: table; width: 100%; border-radius: 2px; }
 .pf-footer-cell { display: table-cell; text-align: center; vertical-align: middle; padding: 0 12px; border-right: 1px solid #3a3a3a; }
 .pf-footer-cell:last-child { border-right: none; }
 .pf-footer-cell strong { color: #fff; display: block; margin-bottom: 3px; font-size: 10px; }
 
+.action-banner.print-hide,
+.action-banner,
+.page-break-controls,
+.print-preview-actions,
+a[href*="download_pdf"] {
+    display: none !important;
+}
 
 @media print {
-    .id-header-block,
-    .pf-header-box .pf-meta-strip {
+    .pf-repeat-header {
+        display: block !important;
+    }
+    .pf-wrap > .id-header-block,
+    .pf-wrap > .pf-header-box {
         display: none !important;
-    }
-
-    .pf-header-box {
-        padding: 0 20px 10px !important;
-    }
-
-    .pf-parties {
-        margin-top: 0 !important;
-        margin-bottom: 12px !important;
-    }
-
-    .pf-native-header {
-        padding: 2px 20px 3px !important;
-    }
-
-    .pf-native-header-main {
-        padding-bottom: 2px !important;
-    }
-
-    .pf-native-doc-subhead {
-        margin-top: 2px !important;
-        margin-bottom: 3px !important;
-    }
-
-    .pf-native-divider {
-        margin: 1px 0 5px !important;
-    }
-
-    .pf-native-meta-cell {
-        padding: 4px 8px !important;
     }
 }
 
 </style>
 
 <div class="pf-wrap">
-    <!-- Unified header for browser preview and PDF -->
-    <div class="id-header-block">
+    <!-- Header for Browser Preview -->
+    <div class="id-header-block pf-preview-header">
         <div class="pf-header-table">
             <div class="pf-header-left">
                 <div class="pf-logo">
                     {% if lh %}
                         {% if lh_image_src %}
                             <img src="{{ lh_image_src }}" alt="{{ doc.company }}">
-                        {% elif lh.header_html or lh.content %}
-                            <div class="pf-lh-content">{{ lh.header_html or lh.content }}</div>
+                        {% elif lh.content %}
+                            <div class="pf-lh-content">{{ lh.content }}</div>
                         {% else %}
                             <div class="pf-company-name">{{ doc.company }}</div>
                         {% endif %}
@@ -246,10 +182,10 @@ tr { page-break-inside: avoid; }
                     {% endif %}
                 </div>
             </div>
-        </div>
-        <div class="pf-doc-subhead">
-            <div class="pf-doc-title">{{ "Quotation" if is_qtn else "Sales Invoice" }}</div>
-            <div class="pf-doc-number">#{{ doc.name }}</div>
+            <div class="pf-header-right">
+                <div class="pf-doc-title">Sales Order</div>
+                <div style="font-weight: 700; color: #003366; font-size: 14px; margin-top: 5px;">#{{ doc.name }}</div>
+            </div>
         </div>
     </div>
     <!-- Meta Strip and Party Cards (First Page) -->
@@ -257,11 +193,11 @@ tr { page-break-inside: avoid; }
         <div class="pf-meta-strip">
             <div class="pf-meta-cell">
                 <div class="pf-meta-label">Date</div>
-                <div class="pf-meta-value">{{ doc.get_formatted("transaction_date" if is_qtn else "posting_date") }}</div>
+                <div class="pf-meta-value">{{ doc.get_formatted("transaction_date") }}</div>
             </div>
             <div class="pf-meta-cell">
-                <div class="pf-meta-label">{{ "Valid Till" if is_qtn else "Due Date" }}</div>
-                <div class="pf-meta-value">{{ doc.get_formatted("valid_till" if is_qtn else "due_date") if (doc.valid_till or doc.due_date) else "-" }}</div>
+                <div class="pf-meta-label">Delivery Date</div>
+                <div class="pf-meta-value">{{ doc.get_formatted("delivery_date") if doc.delivery_date else "-" }}</div>
             </div>
             <div class="pf-meta-cell">
                 <div class="pf-meta-label">Currency</div>
@@ -275,7 +211,7 @@ tr { page-break-inside: avoid; }
 
         <div class="pf-parties">
             <div class="pf-party-card">
-                <div class="pf-party-badge">{{ "From" if is_qtn else "Seller" }}</div>
+                <div class="pf-party-badge">From</div>
                 <div class="pf-party-name">{{ doc.company }}</div>
                 {% if company_doc and company_doc.email %}
                 <div class="pf-party-row"><div class="pf-party-row-label">Email:</div><div class="pf-party-row-value">{{ company_doc.email }}</div></div>
@@ -289,12 +225,9 @@ tr { page-break-inside: avoid; }
                 {% if co_addr and co_addr.county %}
                 <div class="pf-party-row"><div class="pf-party-row-label">CR No.:</div><div class="pf-party-row-value">{{ co_addr.county }}</div></div>
                 {% endif %}
-                {% if co_full_address %}
-                <div class="pf-party-row"><div class="pf-party-row-label">Address:</div><div class="pf-party-row-value">{{ co_full_address }}</div></div>
-                {% endif %}
             </div>
             <div class="pf-party-card">
-                <div class="pf-party-badge">{{ "To" if is_qtn else "Buyer" }}</div>
+                <div class="pf-party-badge">To</div>
                 <div class="pf-party-name">{{ party_name }}</div>
                 {% if cust_addr and cust_addr.email_id %}
                 <div class="pf-party-row"><div class="pf-party-row-label">Email:</div><div class="pf-party-row-value">{{ cust_addr.email_id }}</div></div>
@@ -305,11 +238,9 @@ tr { page-break-inside: avoid; }
                 {% if cust_doc and cust_doc.tax_id %}
                 <div class="pf-party-row"><div class="pf-party-row-label">VAT No.:</div><div class="pf-party-row-value">{{ cust_doc.tax_id }}</div></div>
                 {% endif %}
-                {% if cust_addr and cust_addr.county %}
-                <div class="pf-party-row"><div class="pf-party-row-label">CR No.:</div><div class="pf-party-row-value">{{ cust_addr.county }}</div></div>
-                {% endif %}
-                {% if cust_full_address %}
-                <div class="pf-party-row"><div class="pf-party-row-label">Address:</div><div class="pf-party-row-value">{{ cust_full_address }}</div></div>
+                {% set cust_cr = cust_doc.custom_cr_number if cust_doc and cust_doc.get("custom_cr_number") else None %}
+                {% if cust_cr %}
+                <div class="pf-party-row"><div class="pf-party-row-label">CR No.:</div><div class="pf-party-row-value">{{ cust_cr }}</div></div>
                 {% endif %}
             </div>
         </div>
@@ -317,15 +248,53 @@ tr { page-break-inside: avoid; }
 
     <!-- Items Table -->
     <table class="pf-master-table">
-        <colgroup>
-            <col class="pf-col-num">
-            <col class="pf-col-desc">
-            <col class="pf-col-type">
-            <col class="pf-col-qty">
-            <col class="pf-col-rate">
-            <col class="pf-col-amt">
-        </colgroup>
         <thead>
+            <tr>
+                <td colspan="6" style="padding: 0; border: none; background: #fff;">
+                    <div class="pf-repeat-header">
+                        <div class="pf-repeat-header-main">
+                            <div class="pf-header-left">
+                                <div class="pf-logo">
+                                    {% if lh %}
+                                        {% if lh_image_src %}
+                                            <img src="{{ lh_image_src }}" alt="{{ doc.company }}">
+                                        {% elif lh.content %}
+                                            <div class="pf-lh-content">{{ lh.content }}</div>
+                                        {% else %}
+                                            <div class="pf-company-name">{{ doc.company }}</div>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="pf-company-name">{{ doc.company }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="pf-header-right">
+                                <div class="pf-doc-title">Sales Order</div>
+                                <div style="font-weight: 700; color: #003366; font-size: 14px; margin-top: 5px;">#{{ doc.name }}</div>
+                            </div>
+                        </div>
+                        <hr class="pf-divider">
+                        <div class="pf-repeat-meta">
+                            <div class="pf-meta-cell">
+                                <div class="pf-meta-label">Date</div>
+                                <div class="pf-meta-value">{{ doc.get_formatted("transaction_date") }}</div>
+                            </div>
+                            <div class="pf-meta-cell">
+                                <div class="pf-meta-label">Delivery Date</div>
+                                <div class="pf-meta-value">{{ doc.get_formatted("delivery_date") if doc.delivery_date else "-" }}</div>
+                            </div>
+                            <div class="pf-meta-cell">
+                                <div class="pf-meta-label">Currency</div>
+                                <div class="pf-meta-value">{{ doc.currency }}</div>
+                            </div>
+                            <div class="pf-meta-cell">
+                                <div class="pf-meta-label">Status</div>
+                                <div class="pf-meta-value">{{ doc.status }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
             <tr>
                 <th class="pf-col-num">#</th>
                 <th class="pf-col-desc">Description</th>
@@ -364,7 +333,7 @@ tr { page-break-inside: avoid; }
                     <div class="pf-terms-body">{{ doc.terms }}</div>
                 </div>
                 {% endif %}
-                
+
                 {% if bank %}
                 <div class="pf-banking pf-summary-block">
                     <div class="pf-banking-title" style="font-size: 9.5px; font-weight: 700; color: #003366; margin-bottom: 5px;">Banking Details for Payment:</div>
@@ -393,87 +362,6 @@ tr { page-break-inside: avoid; }
                         <td style="padding: 7px 10px; background: #003366; color: #fff; font-weight: 700; border: 1px solid #003366; text-align: right;">{{ doc.currency }} {{ "{:,.2f}".format(doc.grand_total) }}</td>
                     </tr>
                 </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-{# ── Native Frappe Repeating Header (used by wkhtmltopdf only) ── #}
-<div id="header-html" style="display:none;">
-    <style>
-        .pf-native-header { padding: 10px 20px 6px; font-family: 'Segoe UI', Arial, sans-serif; color: #1c1c1c; }
-        .pf-native-header-main { display: table; width: 100%; padding-bottom: 8px; }
-        .pf-native-header-left { display: table-cell; width: 100%; vertical-align: middle; }
-        .pf-native-header .pf-logo img { max-height: 75px; max-width: 250px; object-fit: contain; width: auto; }
-        .pf-native-header .pf-company-name {
-            font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: #003366;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            line-height: 1.1;
-        }
-        .pf-native-doc-subhead {
-            display: inline-block;
-            margin-top: 6px;
-            margin-bottom: 6px;
-            text-align: left;
-            white-space: nowrap;
-        }
-        .pf-native-doc-subhead > div {
-            display: inline-block;
-            vertical-align: baseline;
-        }
-        .pf-native-doc-title { font-size: 22px; font-weight: 700; color: #003366; letter-spacing: 2px; text-transform: uppercase; }
-        .pf-native-doc-number { margin-left: 8px; font-size: 14px; font-weight: 700; color: #003366; }
-        .pf-native-divider { border: none; border-top: 2px solid #003366; margin: 4px 0 8px; }
-        .pf-native-meta { display: table; width: 100%; border: 1px solid #d5d5d5; }
-        .pf-native-meta-cell { display: table-cell; padding: 5px 10px; border-right: 1px solid #d5d5d5; width: 25%; vertical-align: middle; }
-        .pf-native-meta-cell:last-child { border-right: none; }
-        .pf-native-meta-label { font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
-        .pf-native-meta-value { font-weight: 700; font-size: 11.5px; color: #1c1c1c; }
-        .pf-lh-content { font-size: 10px; color: #666; }
-    </style>
-    <div class="pf-native-header">
-        <div class="pf-native-header-main">
-            <div class="pf-native-header-left">
-                <div class="pf-logo">
-                    {% if lh %}
-                        {% if lh_image_src %}
-                            <img src="{{ lh_image_src }}" alt="{{ doc.company }}">
-                        {% elif lh.header_html or lh.content %}
-                            <div class="pf-lh-content">{{ lh.header_html or lh.content }}</div>
-                        {% else %}
-                            <div class="pf-company-name">{{ doc.company }}</div>
-                        {% endif %}
-                    {% else %}
-                        <div class="pf-company-name">{{ doc.company }}</div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="pf-native-doc-subhead">
-            <div class="pf-native-doc-title">{{ "Quotation" if is_qtn else "Sales Invoice" }}</div>
-            <div class="pf-native-doc-number">#{{ doc.name }}</div>
-        </div>
-        <hr class="pf-native-divider">
-        <div class="pf-native-meta">
-            <div class="pf-native-meta-cell">
-                <div class="pf-native-meta-label">Date</div>
-                <div class="pf-native-meta-value">{{ doc.get_formatted("transaction_date" if is_qtn else "posting_date") }}</div>
-            </div>
-            <div class="pf-native-meta-cell">
-                <div class="pf-native-meta-label">{{ "Valid Till" if is_qtn else "Due Date" }}</div>
-                <div class="pf-native-meta-value">{{ doc.get_formatted("valid_till" if is_qtn else "due_date") if (doc.valid_till or doc.due_date) else "-" }}</div>
-            </div>
-            <div class="pf-native-meta-cell">
-                <div class="pf-native-meta-label">Currency</div>
-                <div class="pf-native-meta-value">{{ doc.currency }}</div>
-            </div>
-            <div class="pf-native-meta-cell">
-                <div class="pf-native-meta-label">Status</div>
-                <div class="pf-native-meta-value">{{ doc.status }}</div>
             </div>
         </div>
     </div>
