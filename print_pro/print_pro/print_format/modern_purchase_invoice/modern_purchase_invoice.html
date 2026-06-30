@@ -53,7 +53,7 @@ tr { page-break-inside: avoid; }
 
 /* ── Header Components ── */
 .pf-header-box { padding: 10px 20px 2px; }
-.pf-logo img { max-height: 80px; max-width: 260px; object-fit: contain; }
+.pf-logo img { max-height: 50px; max-width: 200px; object-fit: contain; }
 .pf-logo .pf-company-name {
     font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     font-size: 24px;
@@ -63,7 +63,7 @@ tr { page-break-inside: avoid; }
     text-transform: uppercase;
     line-height: 1.1;
 }
-.pf-doc-title { font-size: 22px; font-weight: 700; color: #003366; letter-spacing: 2px; text-transform: uppercase; }
+.pf-doc-title { font-size: 20px; font-weight: 700; color: #003366; letter-spacing: 2px; text-transform: uppercase; }
 
 .pf-divider { border: none; border-top: 2px solid #003366; margin: 4px 0 8px; }
 
@@ -91,12 +91,12 @@ tr { page-break-inside: avoid; }
 .pf-party-row-value { display: table-cell; color: #1c1c1c; font-weight: 500; }
 
 /* ── Items Table ── */
-.pf-col-num  { width: 4%; min-width: 24px; max-width: 32px; text-align: center; }
-.pf-col-desc { width: 38%; }
-.pf-col-type { width: 16%; text-align: center; }
-.pf-col-qty  { width: 17%; text-align: center; }
-.pf-col-rate { width: 12.5%; text-align: right; }
-.pf-col-amt  { width: 12.5%; text-align: right; }
+.pf-col-num  { width: 4%;  text-align: center; }
+.pf-col-desc { width: 44%; }
+.pf-col-type { width: 12%; text-align: center; }
+.pf-col-qty  { width: 16%; text-align: center; }
+.pf-col-rate { width: 12%; text-align: right; }
+.pf-col-amt  { width: 12%; text-align: right; }
 
 .pf-master-table th {
     background: #003366;
@@ -112,25 +112,10 @@ tr { page-break-inside: avoid; }
     vertical-align: top;
     font-size: 11px;
 }
-.pf-item-row td.pf-col-num,
-.pf-master-table th.pf-col-num {
-    width: 4%;
-    min-width: 24px;
-    max-width: 32px;
-    padding-left: 1px;
-    padding-right: 1px;
-    white-space: nowrap;
-}
-.pf-item-row td.pf-col-rate,
-.pf-item-row td.pf-col-amt,
-.pf-master-table th.pf-col-rate,
-.pf-master-table th.pf-col-amt {
-    white-space: nowrap;
-}
 .pf-item-row:nth-child(even) { background: #f4f8fb; }
 
 /* ── Terms & Banking ── */
-.pf-terms-title { display: inline-block; background: #fff6f0; border-left: 3px solid #003366; padding: 3px 8px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; color: #003366; margin-bottom: 5px; }
+.pf-terms-title { display: inline-block; background: #f0f5fa; border-left: 3px solid #003366; padding: 3px 8px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; color: #003366; margin-bottom: 5px; }
 .pf-terms-body { font-size: 10px; color: #444; line-height: 1.5; }
 .pf-summary-section { padding: 10px 20px 0; page-break-inside: avoid; break-inside: avoid; }
 .pf-summary-grid { display: table; width: 100%; table-layout: fixed; }
