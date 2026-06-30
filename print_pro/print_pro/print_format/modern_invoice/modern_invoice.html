@@ -9,15 +9,40 @@
 {% set company_doc = frappe.get_doc("Company", doc.company) if doc.company else None %}
 
 {# Letter Head: use doc.letter_head, fallback to company default #}
-{% set lh_name = doc.letter_head if doc.letter_head else (frappe.db.get_value("Company", doc.company, "default_letter_head") if doc.company else None) %}
+{% set selected_letterhead = frappe.form_dict.letterhead if frappe.form_dict and frappe.form_dict.letterhead else None %}
+{% set lh_name = selected_letterhead if selected_letterhead else (doc.letter_head if doc.letter_head else (frappe.db.get_value("Company", doc.company, "default_letter_head") if doc.company else None)) %}
 {% set lh = frappe.get_doc("Letter Head", lh_name) if lh_name else None %}
+{% set lh_image_src = get_file_data_url(lh.image) if lh and lh.image else None %}
 
 {# Company Address #}
 {% set co_addr_name = company_doc.company_address if company_doc and company_doc.get("company_address") else None %}
+{% if not co_addr_name and doc.company %}
+{% set company_addr_links = frappe.get_all("Dynamic Link", filters={"link_doctype": "Company", "link_name": doc.company, "parenttype": "Address"}, fields=["parent"], limit=1) %}
+{% set co_addr_name = company_addr_links[0].parent if company_addr_links else None %}
+{% endif %}
 {% set co_addr = frappe.get_doc("Address", co_addr_name) if co_addr_name else None %}
+{% set co_addr_parts = [] %}
+{% if co_addr and co_addr.address_line2 %}{% set _ = co_addr_parts.append("Building No: " ~ co_addr.address_line2) %}{% endif %}
+{% if co_addr and co_addr.address_line1 %}{% set _ = co_addr_parts.append(co_addr.address_line1) %}{% endif %}
+{% if co_addr and co_addr.state %}{% set _ = co_addr_parts.append(co_addr.state) %}{% endif %}
+{% if co_addr and co_addr.pincode %}{% set _ = co_addr_parts.append(co_addr.pincode) %}{% endif %}
+{% if co_addr and co_addr.country %}{% set _ = co_addr_parts.append(co_addr.country) %}{% endif %}
+{% set co_full_address = ", ".join(co_addr_parts) %}
 
 {# Customer Address #}
-{% set cust_addr = frappe.get_doc("Address", doc.customer_address) if doc.customer_address else None %}
+{% set cust_addr_name = doc.customer_address if doc.customer_address else None %}
+{% if not cust_addr_name and doc.customer %}
+{% set customer_addr_links = frappe.get_all("Dynamic Link", filters={"link_doctype": "Customer", "link_name": doc.customer, "parenttype": "Address"}, fields=["parent"], limit=1) %}
+{% set cust_addr_name = customer_addr_links[0].parent if customer_addr_links else None %}
+{% endif %}
+{% set cust_addr = frappe.get_doc("Address", cust_addr_name) if cust_addr_name else None %}
+{% set cust_addr_parts = [] %}
+{% if cust_addr and cust_addr.address_line2 %}{% set _ = cust_addr_parts.append("Building No. " ~ cust_addr.address_line2) %}{% endif %}
+{% if cust_addr and cust_addr.address_line1 %}{% set _ = cust_addr_parts.append(cust_addr.address_line1) %}{% endif %}
+{% if cust_addr and cust_addr.state %}{% set _ = cust_addr_parts.append(cust_addr.state) %}{% endif %}
+{% if cust_addr and cust_addr.pincode %}{% set _ = cust_addr_parts.append(cust_addr.pincode) %}{% endif %}
+{% if cust_addr and cust_addr.country %}{% set _ = cust_addr_parts.append(cust_addr.country) %}{% endif %}
+{% set cust_full_address = ", ".join(cust_addr_parts) %}
 
 {# Customer doc for VAT / CR #}
 {% set cust_doc = frappe.get_doc("Customer", doc.customer) if doc.customer else None %}
@@ -25,11 +50,6 @@
 {# Bank Account linked to Company #}
 {% set bank_accounts = frappe.get_all("Bank Account", filters={"company": doc.company, "is_company_account": 1}, fields=["name", "bank", "iban", "account_name"], limit=1) %}
 {% set bank = bank_accounts[0] if bank_accounts else None %}
-
-{# Items padding #}
-{% set min_rows = 8 %}
-{% set item_count = doc.items | length %}
-{% set pad_rows = [min_rows - item_count, 0] | max %}
 
 <style>
 /* ── Reset & Base ─────────────────────────────────────────── */
@@ -43,6 +63,16 @@
     max-width: 820px;
     margin: 0 auto;
     padding: 24px 28px 0;
+}
+
+/* ── Letter Head Content ── */
+.pf-lh-content img {
+    max-height: 80px;
+    max-width: 100%;
+    object-fit: contain;
+}
+.pf-lh-content {
+    font-size: 10px;
 }
 
 /* ── Header ───────────────────────────────────────────────── */
@@ -78,6 +108,25 @@
     color: #0a6e8a;
     letter-spacing: 2px;
     text-transform: uppercase;
+    white-space: nowrap;
+}
+.pf-doc-subhead {
+    display: inline-block;
+    text-align: left;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    white-space: nowrap;
+}
+.pf-doc-subhead > div {
+    display: inline-block;
+    vertical-align: baseline;
+}
+.pf-doc-number {
+    margin-top: 0;
+    margin-left: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a2e;
 }
 
 /* ── Divider ──────────────────────────────────────────────── */
@@ -119,19 +168,20 @@
     font-size: 11px;
     color: #1a1a2e;
 }
-
 /* ── Seller / Buyer Cards ─────────────────────────────────── */
 .pf-parties {
-    display: table;
+    display: block;
     width: 100%;
     margin-bottom: 14px;
+    font-size: 0;
 }
 .pf-party-card {
-    display: table-cell;
+    display: inline-block;
     width: 50%;
-    vertical-align: top;
     padding: 10px 12px;
     border: 1px solid #d5d5d5;
+    vertical-align: top;
+    font-size: 11px;
 }
 .pf-party-card:first-child { border-right: none; }
 .pf-party-badge {
@@ -182,38 +232,73 @@
 }
 .pf-items-table th {
     padding: 7px 8px;
-    font-size: 9.5px;
+    font-size: 9px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     border: 1px solid #0a6e8a;
+    color: #fff;
 }
 .pf-items-table td {
-    padding: 5px 8px;
+    padding: 6px 8px;
+    font-size: 11px;
     border: 1px solid #ddd;
     vertical-align: top;
-    height: 20px;
 }
 .pf-items-table tbody tr:nth-child(even) { background: #f8fbfc; }
-.pf-items-table .col-num  { width: 4%;  text-align: center; }
+.pf-items-table .col-num  { width: 4%; min-width: 24px; max-width: 32px; text-align: center; }
 .pf-items-table .col-desc { width: 38%; }
-.pf-items-table .col-type { width: 14%; text-align: center; }
-.pf-items-table .col-qty  { width: 10%; text-align: center; }
-.pf-items-table .col-rate { width: 17%; text-align: right; }
-.pf-items-table .col-amt  { width: 17%; text-align: right; }
+.pf-items-table .col-type { width: 16%; text-align: center; }
+.pf-items-table .col-qty  { width: 17%; text-align: center; }
+.pf-items-table .col-rate { width: 12.5%; text-align: right; }
+.pf-items-table .col-amt  { width: 12.5%; text-align: right; }
+.pf-items-table td.col-num,
+.pf-items-table th.col-num {
+    width: 4%;
+    min-width: 24px;
+    max-width: 32px;
+    white-space: nowrap;
+}
+.pf-items-table td.col-type,
+.pf-items-table td.col-qty,
+.pf-items-table td.col-rate,
+.pf-items-table td.col-amt,
+.pf-items-table th.col-type,
+.pf-items-table th.col-qty,
+.pf-items-table th.col-rate,
+.pf-items-table th.col-amt {
+    white-space: nowrap;
+}
 
-/* ── Totals ───────────────────────────────────────────────── */
-.pf-bottom {
+/* ── Totals / Summary ─────────────────────────────────────── */
+.pf-summary-section {
+    padding: 10px 0 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+.pf-summary-grid {
     display: table;
     width: 100%;
-    margin-bottom: 14px;
+    table-layout: fixed;
 }
-.pf-bottom-left, .pf-bottom-right {
+.pf-summary-left {
     display: table-cell;
+    width: 58%;
+    vertical-align: top;
+    padding-right: 16px;
+}
+.pf-summary-right {
+    display: table-cell;
+    width: 42%;
     vertical-align: top;
 }
-.pf-bottom-left { width: 55%; padding-right: 16px; }
-.pf-bottom-right { width: 45%; }
+.pf-summary-block {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+.pf-summary-block + .pf-summary-block {
+    margin-top: 12px;
+}
 
 .pf-totals-table {
     width: 100%;
@@ -267,13 +352,53 @@
 }
 .pf-banking-body strong { color: #1a1a2e; }
 
+.action-banner.print-hide,
+.action-banner,
+.page-break-controls,
+.print-preview-actions,
+a[href*="download_pdf"] {
+    display: none !important;
+}
+
+@media print {
+    .id-header-block,
+    .pf-header-box .pf-meta-strip {
+        display: none !important;
+    }
+    .pf-header-box {
+        padding-top: 0 !important;
+    }
+    .pf-parties {
+        margin-top: 0 !important;
+    }
+    .pf-native-header {
+        padding: 2px 0 3px !important;
+    }
+    .pf-native-header-main {
+        padding-bottom: 2px !important;
+    }
+    .pf-native-doc-subhead {
+        margin-top: 2px !important;
+        margin-bottom: 3px !important;
+    }
+    .pf-native-divider {
+        margin: 1px 0 5px !important;
+    }
+    .pf-native-meta-cell {
+        padding: 4px 8px !important;
+    }
+    .pf-footer {
+        display: none !important;
+    }
+}
+
 /* ── Footer Bar ───────────────────────────────────────────── */
 .pf-footer {
     background: #1a1a2e;
     color: #ccc;
     text-align: center;
-    padding: 10px 20px;
-    font-size: 9.5px;
+    padding: 12px 22px;
+    font-size: 10.5px;
     margin-top: 18px;
     display: table;
     width: 100%;
@@ -282,121 +407,148 @@
     display: table-cell;
     text-align: center;
     vertical-align: middle;
-    padding: 0 10px;
+    padding: 0 12px;
     border-right: 1px solid #3a3a5c;
 }
 .pf-footer-cell:last-child { border-right: none; }
-.pf-footer-cell strong { color: #fff; display: block; margin-bottom: 1px; }
+.pf-footer-cell strong { color: #fff; display: block; margin-bottom: 2px; font-size: 10px; }
 </style>
 
 <div class="pf-wrap">
 
     {# ── HEADER ──────────────────────────────────────────────── #}
-    <div class="pf-header">
-        <div class="pf-header-left">
-            <div class="pf-logo">
-                {% if lh and lh.image %}
-                    <img src="{{ lh.image }}" alt="{{ doc.company }}">
-                {% else %}
-                    <div class="pf-company-name">{{ doc.company or "Company" }}</div>
+    <div class="id-header-block">
+        <div class="pf-header">
+            <div class="pf-header-left">
+                <div class="pf-logo">
+                    {% if lh %}
+                        {% if lh_image_src %}
+                            <img src="{{ lh_image_src }}" alt="{{ doc.company }}">
+                        {% elif lh.content %}
+                            <div class="pf-lh-content">{{ lh.content }}</div>
+                        {% else %}
+                            <div class="pf-company-name">{{ doc.company or "Company" }}</div>
+                        {% endif %}
+                    {% else %}
+                        <div class="pf-company-name">{{ doc.company or "Company" }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="pf-doc-subhead">
+            <div class="pf-doc-title">Sales Invoice</div>
+            <div class="pf-doc-number">#{{ doc.name }}</div>
+        </div>
+        <hr class="pf-divider">
+    </div>
+
+    {# ── META STRIP + SELLER / BUYER CARDS ───────────────────── #}
+    <div class="pf-header-box">
+        <div class="pf-meta-strip">
+            <div class="pf-meta-cell">
+                <div class="pf-meta-label">Invoice No.</div>
+                <div class="pf-meta-value">{{ doc.name }}</div>
+            </div>
+            <div class="pf-meta-cell">
+                <div class="pf-meta-label">Date</div>
+                <div class="pf-meta-value">{{ doc.get_formatted("posting_date") }}</div>
+            </div>
+            <div class="pf-meta-cell">
+                <div class="pf-meta-label">Due Date</div>
+                <div class="pf-meta-value">{{ doc.get_formatted("due_date") if doc.due_date else "-" }}</div>
+            </div>
+            <div class="pf-meta-cell">
+                <div class="pf-meta-label">Currency</div>
+                <div class="pf-meta-value">{{ doc.currency }}</div>
+            </div>
+        </div>
+
+        {# ── SELLER / BUYER CARDS ────────────────────────────── #}
+        <div class="pf-parties">
+            {# SELLER #}
+            <div class="pf-party-card">
+                <div class="pf-party-badge">Seller</div>
+                <div class="pf-party-name">{{ doc.company }}</div>
+                {% if company_doc and company_doc.email %}
+                <div class="pf-party-row">
+                    <div class="pf-party-row-label">Email:</div>
+                    <div class="pf-party-row-value">{{ company_doc.email }}</div>
+                </div>
+                {% endif %}
+                {% if company_doc and company_doc.phone_no %}
+                <div class="pf-party-row">
+                    <div class="pf-party-row-label">Contact:</div>
+                    <div class="pf-party-row-value">{{ company_doc.phone_no }}</div>
+                </div>
+                {% endif %}
+                {% if company_doc and company_doc.tax_id %}
+                <div class="pf-party-row">
+                    <div class="pf-party-row-label">VAT No.:</div>
+                    <div class="pf-party-row-value">{{ company_doc.tax_id }}</div>
+                </div>
+                {% endif %}
+                {% if co_addr and co_addr.county %}
+                <div class="pf-party-row">
+                    <div class="pf-party-row-label">CR No.:</div>
+                    <div class="pf-party-row-value">{{ co_addr.county }}</div>
+                </div>
+                {% endif %}
+                {% if co_full_address %}
+                <div class="pf-party-row">
+                    <div class="pf-party-row-label">Address:</div>
+                    <div class="pf-party-row-value">{{ co_full_address }}</div>
+                </div>
                 {% endif %}
             </div>
-        </div>
-        <div class="pf-header-right">
-            <div class="pf-doc-title">Sales Invoice</div>
-        </div>
-    </div>
 
-    <hr class="pf-divider">
-
-    {# ── META STRIP ──────────────────────────────────────────── #}
-    <div class="pf-meta-strip">
-        <div class="pf-meta-cell">
-            <div class="pf-meta-label">Invoice No.</div>
-            <div class="pf-meta-value">{{ doc.name }}</div>
-        </div>
-        <div class="pf-meta-cell">
-            <div class="pf-meta-label">Date</div>
-            <div class="pf-meta-value">{{ doc.get_formatted("posting_date") }}</div>
-        </div>
-        <div class="pf-meta-cell">
-            <div class="pf-meta-label">Due Date</div>
-            <div class="pf-meta-value">{{ doc.get_formatted("due_date") if doc.due_date else "-" }}</div>
-        </div>
-        <div class="pf-meta-cell">
-            <div class="pf-meta-label">Currency</div>
-            <div class="pf-meta-value">{{ doc.currency }}</div>
-        </div>
-    </div>
-
-    {# ── SELLER / BUYER CARDS ────────────────────────────────── #}
-    <div class="pf-parties">
-        {# SELLER #}
-        <div class="pf-party-card">
-            <div class="pf-party-badge">Seller</div>
-            <div class="pf-party-name">{{ doc.company }}</div>
-            {% if company_doc and company_doc.email %}
-            <div class="pf-party-row">
-                <div class="pf-party-row-label">Email:</div>
-                <div class="pf-party-row-value">{{ company_doc.email }}</div>
+            {# BUYER #}
+            <div class="pf-party-card">
+                <div class="pf-party-badge">Buyer</div>
+                <div class="pf-party-name">{{ doc.customer_name }}</div>
+                {% if cust_addr and cust_addr.email_id %}
+                <div class="pf-party-row">
+                    <div class="pf-party-row-label">Email:</div>
+                    <div class="pf-party-row-value">{{ cust_addr.email_id }}</div>
+                </div>
+                {% endif %}
+                {% if cust_addr and cust_addr.phone %}
+                <div class="pf-party-row">
+                    <div class="pf-party-row-label">Contact:</div>
+                    <div class="pf-party-row-value">{{ cust_addr.phone }}</div>
+                </div>
+                {% endif %}
+                {% if cust_doc and cust_doc.tax_id %}
+                <div class="pf-party-row">
+                    <div class="pf-party-row-label">VAT No.:</div>
+                    <div class="pf-party-row-value">{{ cust_doc.tax_id }}</div>
+                </div>
+                {% endif %}
+                {% if cust_addr and cust_addr.county %}
+                <div class="pf-party-row">
+                    <div class="pf-party-row-label">CR No.:</div>
+                    <div class="pf-party-row-value">{{ cust_addr.county }}</div>
+                </div>
+                {% endif %}
+                {% if cust_full_address %}
+                <div class="pf-party-row">
+                    <div class="pf-party-row-label">Address:</div>
+                    <div class="pf-party-row-value">{{ cust_full_address }}</div>
+                </div>
+                {% endif %}
             </div>
-            {% endif %}
-            {% if company_doc and company_doc.phone_no %}
-            <div class="pf-party-row">
-                <div class="pf-party-row-label">Contact:</div>
-                <div class="pf-party-row-value">{{ company_doc.phone_no }}</div>
-            </div>
-            {% endif %}
-            {% if company_doc and company_doc.tax_id %}
-            <div class="pf-party-row">
-                <div class="pf-party-row-label">VAT No.:</div>
-                <div class="pf-party-row-value">{{ company_doc.tax_id }}</div>
-            </div>
-            {% endif %}
-            {% if co_addr and co_addr.county %}
-            <div class="pf-party-row">
-                <div class="pf-party-row-label">CR No.:</div>
-                <div class="pf-party-row-value">{{ co_addr.county }}</div>
-            </div>
-            {% endif %}
-        </div>
-
-        {# BUYER #}
-        <div class="pf-party-card">
-            <div class="pf-party-badge">Buyer</div>
-            <div class="pf-party-name">{{ doc.customer_name }}</div>
-            {% if cust_addr and cust_addr.email_id %}
-            <div class="pf-party-row">
-                <div class="pf-party-row-label">Email:</div>
-                <div class="pf-party-row-value">{{ cust_addr.email_id }}</div>
-            </div>
-            {% endif %}
-            {% if cust_addr and cust_addr.phone %}
-            <div class="pf-party-row">
-                <div class="pf-party-row-label">Contact:</div>
-                <div class="pf-party-row-value">{{ cust_addr.phone }}</div>
-            </div>
-            {% endif %}
-            {% if cust_doc and cust_doc.tax_id %}
-            <div class="pf-party-row">
-                <div class="pf-party-row-label">VAT No.:</div>
-                <div class="pf-party-row-value">{{ cust_doc.tax_id }}</div>
-            </div>
-            {% endif %}
-            {% if cust_doc %}
-            {% set cust_cr = frappe.db.get_value("Customer", doc.customer, "custom_cr_number") %}
-            {% if cust_cr %}
-            <div class="pf-party-row">
-                <div class="pf-party-row-label">CR No.:</div>
-                <div class="pf-party-row-value">{{ cust_cr }}</div>
-            </div>
-            {% endif %}
-            {% endif %}
         </div>
     </div>
 
     {# ── ITEMS TABLE ─────────────────────────────────────────── #}
     <table class="pf-items-table">
+        <colgroup>
+            <col class="col-num">
+            <col class="col-desc">
+            <col class="col-type">
+            <col class="col-qty">
+            <col class="col-rate">
+            <col class="col-amt">
+        </colgroup>
         <thead>
             <tr>
                 <th class="col-num">#</th>
@@ -414,7 +566,7 @@
                 <td class="col-desc">
                     <strong>{{ item.item_name or item.item_code }}</strong>
                     {% if item.description and item.description != item.item_name %}
-                    <div style="color:#666;font-size:9.5px;">{{ item.description }}</div>
+                    <div style="color:#666;font-size:9px;margin-top:2px;">{{ item.description }}</div>
                     {% endif %}
                 </td>
                 <td class="col-type">{{ item.item_group or "-" }}</td>
@@ -423,96 +575,203 @@
                 <td class="col-amt">{{ doc.currency }} {{ "{:,.2f}".format(item.amount) }}</td>
             </tr>
             {% endfor %}
-            {% for _ in range(pad_rows) %}
-            <tr>
-                <td class="col-num">&nbsp;</td>
-                <td class="col-desc">&nbsp;</td>
-                <td class="col-type">&nbsp;</td>
-                <td class="col-qty">&nbsp;</td>
-                <td class="col-rate">&nbsp;</td>
-                <td class="col-amt">&nbsp;</td>
-            </tr>
-            {% endfor %}
         </tbody>
     </table>
 
-    {# ── BOTTOM: TERMS LEFT, TOTALS RIGHT ────────────────────── #}
-    <div class="pf-bottom">
-
-        {# LEFT: Terms & Banking #}
-        <div class="pf-bottom-left">
-            {% if doc.terms %}
-            <div class="pf-terms-title">Terms &amp; Conditions</div>
-            <div class="pf-terms-body">{{ doc.terms }}</div>
-            <hr class="pf-divider-thin">
-            {% endif %}
-
-            {% if bank %}
-            <div class="pf-banking">
-                <div class="pf-banking-title">Banking Details for Payment:</div>
-                <div class="pf-banking-body">
-                    Payments should be made to the following bank account:<br>
-                    <strong>Account Name:</strong> {{ bank.account_name or doc.company }}<br>
-                    <strong>Bank:</strong> {{ bank.bank }}<br>
-                    <strong>IBAN:</strong> {{ bank.iban }}
+    {# ── Summary Section (Custom Quotation style) ───────────────── #}
+    <div class="pf-summary-section">
+        <div class="pf-summary-grid">
+            <div class="pf-summary-left">
+                {% if doc.terms %}
+                <div class="pf-summary-block">
+                    <div class="pf-terms-title">Terms &amp; Conditions</div>
+                    <div class="pf-terms-body">{{ doc.terms }}</div>
                 </div>
-            </div>
-            {% endif %}
-        </div>
+                {% endif %}
 
-        {# RIGHT: Totals #}
-        <div class="pf-bottom-right">
-            <table class="pf-totals-table">
-                <tr>
-                    <td class="lbl">Subtotal (Excl. VAT)</td>
-                    <td class="amt">{{ doc.currency }} {{ "{:,.2f}".format(doc.net_total) }}</td>
-                </tr>
-                {% for tax in doc.taxes %}
-                {% if tax.tax_amount %}
-                <tr>
-                    <td class="lbl">{{ tax.description or "VAT" }}</td>
-                    <td class="amt">{{ doc.currency }} {{ "{:,.2f}".format(tax.tax_amount) }}</td>
-                </tr>
+                {% if bank %}
+                <div class="pf-banking pf-summary-block">
+                    <div class="pf-banking-title">Banking Details for Payment:</div>
+                    <div class="pf-banking-body">
+                        <strong>Account Name:</strong> {{ bank.account_name or doc.company }} |
+                        <strong>Bank:</strong> {{ bank.bank }} |
+                        <strong>IBAN:</strong> {{ bank.iban }}
+                    </div>
+                </div>
                 {% endif %}
-                {% endfor %}
-                {% if not doc.taxes %}
-                <tr>
-                    <td class="lbl">Total VAT</td>
-                    <td class="amt">{{ doc.currency }} {{ "{:,.2f}".format(doc.total_taxes_and_charges) }}</td>
-                </tr>
-                {% endif %}
-                <tr class="pf-totals-grand">
-                    <td>Amount Due</td>
-                    <td style="text-align:right;">{{ doc.currency }} {{ "{:,.2f}".format(doc.grand_total) }}</td>
-                </tr>
-            </table>
+            </div>
+            <div class="pf-summary-right">
+                <table class="pf-totals-table">
+                    <tr>
+                        <td class="lbl">Subtotal (Excl. VAT)</td>
+                        <td class="amt">{{ doc.currency }} {{ "{:,.2f}".format(doc.net_total) }}</td>
+                    </tr>
+                    {% for tax in doc.taxes %}
+                    {% if tax.tax_amount %}
+                    <tr>
+                        <td class="lbl">{{ tax.description or "VAT" }}</td>
+                        <td class="amt">{{ doc.currency }} {{ "{:,.2f}".format(tax.tax_amount) }}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                    {% if not doc.taxes %}
+                    <tr>
+                        <td class="lbl">Total VAT</td>
+                        <td class="amt">{{ doc.currency }} {{ "{:,.2f}".format(doc.total_taxes_and_charges) }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr class="pf-totals-grand">
+                        <td>Amount Due</td>
+                        <td style="text-align:right;">{{ doc.currency }} {{ "{:,.2f}".format(doc.grand_total) }}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 
-    {# ── FOOTER BAR ──────────────────────────────────────────── #}
-    <div class="pf-footer">
-        <div class="pf-footer-cell">
+</div>
+
+{# ── Native Frappe Repeating Header (used by wkhtmltopdf only) ── #}
+<div id="header-html" style="display:none;">
+    <style>
+        .pf-native-header { padding: 10px 0 6px; font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a2e; }
+        .pf-native-header-main { display: table; width: 100%; padding-bottom: 8px; }
+        .pf-native-header-left { display: table-cell; width: 100%; vertical-align: middle; }
+        .pf-native-header .pf-logo img { max-height: 60px; max-width: 200px; object-fit: contain; }
+        .pf-native-header .pf-company-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a2e;
+            letter-spacing: 0.5px;
+        }
+        .pf-native-doc-subhead {
+            display: inline-block;
+            text-align: left;
+            margin-top: 6px;
+            margin-bottom: 6px;
+            white-space: nowrap;
+        }
+        .pf-native-doc-subhead > div {
+            display: inline-block;
+            vertical-align: baseline;
+        }
+        .pf-native-doc-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0a6e8a;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .pf-native-doc-number {
+            margin-left: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .pf-native-divider {
+            border: none;
+            border-top: 2px solid #0a6e8a;
+            margin: 8px 0 12px;
+        }
+        .pf-native-meta {
+            display: table;
+            width: 100%;
+            margin-bottom: 14px;
+            border: 1px solid #d5d5d5;
+        }
+        .pf-native-meta-cell {
+            display: table-cell;
+            padding: 7px 12px;
+            border-right: 1px solid #d5d5d5;
+            vertical-align: middle;
+            width: 25%;
+        }
+        .pf-native-meta-cell:last-child { border-right: none; }
+        .pf-native-meta-label {
+            font-size: 9px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        .pf-native-meta-value {
+            font-weight: 700;
+            font-size: 11px;
+            color: #1a1a2e;
+        }
+    </style>
+    <div class="pf-native-header">
+        <div class="pf-native-header-main">
+            <div class="pf-native-header-left">
+                <div class="pf-logo">
+                    {% if lh %}
+                        {% if lh_image_src %}
+                            <img src="{{ lh_image_src }}" alt="{{ doc.company }}">
+                        {% elif lh.content %}
+                            <div class="pf-lh-content">{{ lh.content }}</div>
+                        {% else %}
+                            <div class="pf-company-name">{{ doc.company or "Company" }}</div>
+                        {% endif %}
+                    {% else %}
+                        <div class="pf-company-name">{{ doc.company or "Company" }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="pf-native-doc-subhead">
+            <div class="pf-native-doc-title">Sales Invoice</div>
+            <div class="pf-native-doc-number">#{{ doc.name }}</div>
+        </div>
+        <hr class="pf-native-divider">
+        <div class="pf-native-meta">
+            <div class="pf-native-meta-cell">
+                <div class="pf-native-meta-label">Invoice No.</div>
+                <div class="pf-native-meta-value">{{ doc.name }}</div>
+            </div>
+            <div class="pf-native-meta-cell">
+                <div class="pf-native-meta-label">Date</div>
+                <div class="pf-native-meta-value">{{ doc.get_formatted("posting_date") }}</div>
+            </div>
+            <div class="pf-native-meta-cell">
+                <div class="pf-native-meta-label">Due Date</div>
+                <div class="pf-native-meta-value">{{ doc.get_formatted("due_date") if doc.due_date else "-" }}</div>
+            </div>
+            <div class="pf-native-meta-cell">
+                <div class="pf-native-meta-label">Currency</div>
+                <div class="pf-native-meta-value">{{ doc.currency }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ── Native Frappe Repeating Footer (extracted by Frappe for wkhtmltopdf) ── #}
+<div id="footer-html" style="display:none;">
+    <style>
+        .pf-native-footer { background: #1a1a2e; color: #ffffff !important; padding: 10px 18px; font-size: 10.5px; display: table; width: 100%; }
+        .pf-native-footer-cell { display: table-cell; text-align: center; vertical-align: middle; padding: 0 12px; border-right: 1px solid #3a3a5c; color: #ffffff !important; }
+        .pf-native-footer-cell:last-child { border-right: none; }
+        .pf-native-footer-cell strong { color: #ffffff !important; display: block; margin-bottom: 2px; font-size: 10px; }
+    </style>
+    <div class="pf-native-footer">
+        <div class="pf-native-footer-cell">
             <strong>{{ doc.company }}</strong>
             {{ company_doc.city if company_doc and company_doc.get("city") else "" }}
         </div>
         {% if company_doc and company_doc.tax_id %}
-        <div class="pf-footer-cell">
-            <strong>VAT No.</strong>
-            {{ company_doc.tax_id }}
+        <div class="pf-native-footer-cell">
+            <strong>VAT No.</strong>{{ company_doc.tax_id }}
         </div>
         {% endif %}
         {% if company_doc and company_doc.email %}
-        <div class="pf-footer-cell">
-            <strong>Email</strong>
-            {{ company_doc.email }}
+        <div class="pf-native-footer-cell">
+            <strong>Email</strong>{{ company_doc.email }}
         </div>
         {% endif %}
         {% if company_doc and company_doc.phone_no %}
-        <div class="pf-footer-cell">
-            <strong>Contact</strong>
-            {{ company_doc.phone_no }}
+        <div class="pf-native-footer-cell">
+            <strong>Contact</strong>{{ company_doc.phone_no }}
         </div>
         {% endif %}
     </div>
-
 </div>
