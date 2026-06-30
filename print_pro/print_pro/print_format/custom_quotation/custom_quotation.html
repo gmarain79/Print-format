@@ -1,5 +1,5 @@
 {# ================================================================
-   CUSTOM QUOTATION — Print Pro
+   CORPORATE BLUE INVOICE — Print Pro
    DocType : Quotation / Sales Invoice
    Layout  : Arab App style | no_letterhead = 1
    Theme   : Warm slate / burnt orange accent
@@ -180,13 +180,19 @@ tr { page-break-inside: avoid; }
 .pf-header-left { width: 60%; }
 .pf-header-right { width: 40%; text-align: right; }
 
-/* .action-banner, .print-preview-actions removed to show PDF buttons */
 .pf-footer-wrap { padding: 0 20px 10px; }
 .pf-footer { background: #1c1c1c; color: #ccc; padding: 12px 18px; font-size: 11px; display: table; width: 100%; border-radius: 2px; }
 .pf-footer-cell { display: table-cell; text-align: center; vertical-align: middle; padding: 0 12px; border-right: 1px solid #3a3a3a; }
 .pf-footer-cell:last-child { border-right: none; }
 .pf-footer-cell strong { color: #fff; display: block; margin-bottom: 3px; font-size: 10px; }
 
+.action-banner.print-hide,
+.action-banner,
+.page-break-controls,
+.print-preview-actions,
+a[href*="download_pdf"] {
+    display: none !important;
+}
 
 @media print {
     .id-header-block,
