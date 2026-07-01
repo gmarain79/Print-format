@@ -1,0 +1,101 @@
+{
+  "doc": {
+    "company": "Arab App",
+    "letter_head": "Arab App Letter Head",
+    "posting_date": "2026-03-29",
+    "due_date": "2026-04-29",
+    "name": "ACC-SINV-2026-00012",
+    "currency": "SAR",
+    "customer": "Intelligent Productivity Co",
+    "customer_name": "شركة الإنتاجية الذكية لتقنية المعلومات",
+    "customer_address": "CUST-ADDR-001",
+    "net_total": 18500.00,
+    "total_taxes_and_charges": 2775.00,
+    "grand_total": 21275.00,
+    "terms": "Payment is due within 30 days from invoice date.\nAll hardware is covered under manufacturer warranty.\nServices are billed separately from hardware and software.\nPrices are VAT exclusive unless stated otherwise.",
+    "items": [
+      {
+        "idx": 1,
+        "item_code": "SRV-001",
+        "item_name": "Network Infrastructure Setup",
+        "description": "Complete LAN/WAN setup including cabling and configuration",
+        "item_group": "Services",
+        "qty": 1,
+        "uom": "Nos",
+        "rate": 8000.00,
+        "amount": 8000.00
+      },
+      {
+        "idx": 2,
+        "item_code": "SEC-001",
+        "item_name": "Firewall Appliance - FortiGate 60F",
+        "description": "Next-generation firewall with 1-year subscription",
+        "item_group": "Hardware",
+        "qty": 2,
+        "uom": "Nos",
+        "rate": 4500.00,
+        "amount": 9000.00
+      },
+      {
+        "idx": 3,
+        "item_code": "SVC-TRAIN-001",
+        "item_name": "Staff IT Training",
+        "description": "On-site training for IT staff — 2 days",
+        "item_group": "Services",
+        "qty": 1,
+        "uom": "Nos",
+        "rate": 1500.00,
+        "amount": 1500.00
+      }
+    ],
+    "taxes": [
+      {
+        "description": "VAT 15%",
+        "tax_amount": 2775.00
+      }
+    ]
+  },
+  "linked_docs": {
+    "Letter Head": {
+      "Arab App Letter Head": {
+        "image": "",
+        "content": ""
+      }
+    },
+    "Company": {
+      "Arab App": {
+        "company_address": "COMP-ADDR-001",
+        "phone_no": "+966 56 927 5518",
+        "email": "info@arabapp.com.sa",
+        "tax_id": "310175397400003",
+        "city": "Riyadh, Kingdom Of Saudi Arabia"
+      }
+    },
+    "Address": {
+      "COMP-ADDR-001": {
+        "address_line1": "Riyadh",
+        "city": "Riyadh",
+        "state": "Riyadh Region",
+        "county": "7037202760"
+      },
+      "CUST-ADDR-001": {
+        "address_line1": "Prince Mohammed Bin Abdulaziz Road",
+        "city": "Jeddah",
+        "state": "Makkah Region",
+        "phone": "+966 12 345 6789",
+        "email_id": "procurement@company.sa"
+      }
+    },
+    "Customer": {
+      "Intelligent Productivity Co": {
+        "tax_id": "311234567800003",
+        "custom_cr_number": "1009184064"
+      }
+    },
+    "Bank Account": {}
+  },
+  "db_values": {
+    "Company::Arab App::default_letter_head": "Arab App Letter Head",
+    "Customer::Intelligent Productivity Co::custom_cr_number": "1009184064"
+  }
+}

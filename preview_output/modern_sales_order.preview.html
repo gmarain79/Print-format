@@ -1,0 +1,554 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+/* ── Reset & Base ─────────────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.pf-wrap {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 11px;
+    color: #1a1a2e;
+    background: #fff;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 24px 28px 0;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.pf-header {
+    display: table;
+    width: 100%;
+    margin-bottom: 16px;
+}
+.pf-header-left,
+.pf-header-right {
+    display: table-cell;
+    vertical-align: middle;
+}
+.pf-header-left { width: 60%; }
+.pf-header-right { width: 40%; text-align: right; }
+
+.pf-logo img {
+    max-height: 60px;
+    max-width: 200px;
+    object-fit: contain;
+}
+.pf-logo .pf-company-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a2e;
+    letter-spacing: 0.5px;
+}
+
+/* ── Document Title ───────────────────────────────────────── */
+.pf-doc-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0a6e8a;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* ── Divider ──────────────────────────────────────────────── */
+.pf-divider {
+    border: none;
+    border-top: 2px solid #0a6e8a;
+    margin: 8px 0 12px;
+}
+.pf-divider-thin {
+    border: none;
+    border-top: 1px solid #d0d0d0;
+    margin: 10px 0;
+}
+
+/* ── Meta Strip ───────────────────────────────────────────── */
+.pf-meta-strip {
+    display: table;
+    width: 100%;
+    margin-bottom: 14px;
+    border: 1px solid #d5d5d5;
+}
+.pf-meta-cell {
+    display: table-cell;
+    padding: 7px 12px;
+    border-right: 1px solid #d5d5d5;
+    vertical-align: middle;
+    width: 25%;
+}
+.pf-meta-cell:last-child { border-right: none; }
+.pf-meta-label {
+    font-size: 9px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+.pf-meta-value {
+    font-weight: 700;
+    font-size: 11px;
+    color: #1a1a2e;
+}
+
+/* ── Seller / Buyer Cards ─────────────────────────────────── */
+.pf-parties {
+    display: table;
+    width: 100%;
+    margin-bottom: 14px;
+}
+.pf-party-card {
+    display: table-cell;
+    width: 50%;
+    vertical-align: top;
+    padding: 10px 12px;
+    border: 1px solid #d5d5d5;
+}
+.pf-party-card:first-child { border-right: none; }
+.pf-party-badge {
+    display: inline-block;
+    background: #0a6e8a;
+    color: #fff;
+    font-size: 8.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-bottom: 6px;
+    letter-spacing: 0.8px;
+}
+.pf-party-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 5px;
+}
+.pf-party-row {
+    display: table;
+    width: 100%;
+    line-height: 1.7;
+    font-size: 10.5px;
+}
+.pf-party-row-label {
+    display: table-cell;
+    color: #555;
+    width: 70px;
+    vertical-align: top;
+}
+.pf-party-row-value {
+    display: table-cell;
+    color: #1a1a2e;
+    font-weight: 500;
+}
+
+/* ── Items Table ──────────────────────────────────────────── */
+.pf-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+}
+.pf-items-table thead tr {
+    background: #0a6e8a;
+    color: #fff;
+}
+.pf-items-table th {
+    padding: 7px 8px;
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid #0a6e8a;
+}
+.pf-items-table td {
+    padding: 5px 8px;
+    border: 1px solid #ddd;
+    vertical-align: top;
+    height: 20px;
+}
+.pf-items-table tbody tr:nth-child(even) { background: #f8fbfc; }
+.pf-items-table .col-num  { width: 4%;  text-align: center; }
+.pf-items-table .col-desc { width: 38%; }
+.pf-items-table .col-type { width: 14%; text-align: center; }
+.pf-items-table .col-qty  { width: 10%; text-align: center; }
+.pf-items-table .col-rate { width: 17%; text-align: right; }
+.pf-items-table .col-amt  { width: 17%; text-align: right; }
+
+/* ── Totals ───────────────────────────────────────────────── */
+.pf-bottom {
+    display: table;
+    width: 100%;
+    margin-bottom: 14px;
+}
+.pf-bottom-left, .pf-bottom-right {
+    display: table-cell;
+    vertical-align: top;
+}
+.pf-bottom-left { width: 55%; padding-right: 16px; }
+.pf-bottom-right { width: 45%; }
+
+.pf-totals-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.pf-totals-table td {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    font-size: 11px;
+}
+.pf-totals-table .lbl { color: #555; }
+.pf-totals-table .amt { text-align: right; font-weight: 600; background: #f4f4f4; }
+.pf-totals-grand { background: #0a6e8a !important; color: #fff !important; font-weight: 700 !important; }
+.pf-totals-grand td { border-color: #0a6e8a !important; color: #fff !important; background: #0a6e8a !important; }
+
+/* ── Terms ────────────────────────────────────────────────── */
+.pf-terms-title {
+    display: inline-block;
+    background: #eef7fa;
+    border-left: 3px solid #0a6e8a;
+    padding: 3px 8px;
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #0a6e8a;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+.pf-terms-body {
+    font-size: 9.5px;
+    color: #444;
+    line-height: 1.6;
+}
+.pf-terms-body ul { padding-left: 16px; }
+.pf-terms-body li { margin-bottom: 2px; }
+
+/* ── Banking ──────────────────────────────────────────────── */
+.pf-banking {
+    margin-top: 10px;
+}
+.pf-banking-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 4px;
+}
+.pf-banking-body {
+    font-size: 10.5px;
+    color: #444;
+    line-height: 1.8;
+}
+.pf-banking-body strong { color: #1a1a2e; }
+
+/* ── Footer Bar ───────────────────────────────────────────── */
+.pf-footer {
+    background: #1a1a2e;
+    color: #ccc;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 9.5px;
+    margin-top: 18px;
+    display: table;
+    width: 100%;
+}
+.pf-footer-cell {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0 10px;
+    border-right: 1px solid #3a3a5c;
+}
+.pf-footer-cell:last-child { border-right: none; }
+.pf-footer-cell strong { color: #fff; display: block; margin-bottom: 1px; }
+</style>
+
+<div class="pf-wrap">
+
+    
+    <div class="pf-header">
+        <div class="pf-header-left">
+            <div class="pf-logo">
+                
+                    <div class="pf-company-name">Arab App</div>
+                
+            </div>
+        </div>
+        <div class="pf-header-right">
+            <div class="pf-doc-title">Sales Order</div>
+        </div>
+    </div>
+
+    <hr class="pf-divider">
+
+    
+    <div class="pf-meta-strip">
+        <div class="pf-meta-cell">
+            <div class="pf-meta-label">Order No.</div>
+            <div class="pf-meta-value">SAL-ORD-2026-00001</div>
+        </div>
+        <div class="pf-meta-cell">
+            <div class="pf-meta-label">Date</div>
+            <div class="pf-meta-value">04/14/2026</div>
+        </div>
+        <div class="pf-meta-cell">
+            <div class="pf-meta-label">Delivery Date</div>
+            <div class="pf-meta-value">04/20/2026</div>
+        </div>
+        <div class="pf-meta-cell">
+            <div class="pf-meta-label">Currency</div>
+            <div class="pf-meta-value">SAR</div>
+        </div>
+    </div>
+
+    
+    <div class="pf-parties">
+        
+        <div class="pf-party-card">
+            <div class="pf-party-badge">Seller</div>
+            <div class="pf-party-name">Arab App</div>
+            
+            <div class="pf-party-row">
+                <div class="pf-party-row-label">Email:</div>
+                <div class="pf-party-row-value">majed.dendini@arabapp.com.sa</div>
+            </div>
+            
+            
+            <div class="pf-party-row">
+                <div class="pf-party-row-label">Contact:</div>
+                <div class="pf-party-row-value">+966 56 927 5518</div>
+            </div>
+            
+            
+            <div class="pf-party-row">
+                <div class="pf-party-row-label">VAT No.:</div>
+                <div class="pf-party-row-value">310175397400003</div>
+            </div>
+            
+            
+            <div class="pf-party-row">
+                <div class="pf-party-row-label">CR No.:</div>
+                <div class="pf-party-row-value">7037202760</div>
+            </div>
+            
+        </div>
+
+        
+        <div class="pf-party-card">
+            <div class="pf-party-badge">Buyer</div>
+            <div class="pf-party-name">شركة الإنتاجية الذكية لتقنية المعلومات</div>
+            
+            <div class="pf-party-row">
+                <div class="pf-party-row-label">Email:</div>
+                <div class="pf-party-row-value">-</div>
+            </div>
+            
+            
+            <div class="pf-party-row">
+                <div class="pf-party-row-label">Contact:</div>
+                <div class="pf-party-row-value">-</div>
+            </div>
+            
+            
+            
+            
+            
+            <div class="pf-party-row">
+                <div class="pf-party-row-label">CR No.:</div>
+                <div class="pf-party-row-value">1009184064</div>
+            </div>
+            
+            
+        </div>
+    </div>
+
+    
+    <table class="pf-items-table">
+        <thead>
+            <tr>
+                <th class="col-num">#</th>
+                <th class="col-desc">Description</th>
+                <th class="col-type">Type</th>
+                <th class="col-qty">Qty</th>
+                <th class="col-rate">Unit Price</th>
+                <th class="col-amt">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            <tr>
+                <td class="col-num">1</td>
+                <td class="col-desc">
+                    <strong>Switch Huawei 48 ports S220-48P4X 980123/8 Switch</strong>
+                    
+                    <div style="color:#666;font-size:9.5px;">(48*10/100/1000BASE-T ports(370W PoE+) 4*10GE SFP)</div>
+                    
+                </td>
+                <td class="col-type">Hardware</td>
+                <td class="col-qty">1 Nos</td>
+                <td class="col-rate">SAR 2,889.00</td>
+                <td class="col-amt">SAR 2,889.00</td>
+            </tr>
+            
+            <tr>
+                <td class="col-num">2</td>
+                <td class="col-desc">
+                    <strong>Huawei Access Point AP36 EKIT ENGIN</strong>
+                    
+                </td>
+                <td class="col-type">Products</td>
+                <td class="col-qty">3 Nos</td>
+                <td class="col-rate">SAR 370.00</td>
+                <td class="col-amt">SAR 1,110.00</td>
+            </tr>
+            
+            <tr>
+                <td class="col-num">3</td>
+                <td class="col-desc">
+                    <strong>Microsoft Business Premium</strong>
+                    
+                </td>
+                <td class="col-type">Products</td>
+                <td class="col-qty">20 Nos</td>
+                <td class="col-rate">SAR 1,000.00</td>
+                <td class="col-amt">SAR 20,000.00</td>
+            </tr>
+            
+            
+            <tr>
+                <td class="col-num">&nbsp;</td>
+                <td class="col-desc">&nbsp;</td>
+                <td class="col-type">&nbsp;</td>
+                <td class="col-qty">&nbsp;</td>
+                <td class="col-rate">&nbsp;</td>
+                <td class="col-amt">&nbsp;</td>
+            </tr>
+            
+            <tr>
+                <td class="col-num">&nbsp;</td>
+                <td class="col-desc">&nbsp;</td>
+                <td class="col-type">&nbsp;</td>
+                <td class="col-qty">&nbsp;</td>
+                <td class="col-rate">&nbsp;</td>
+                <td class="col-amt">&nbsp;</td>
+            </tr>
+            
+            <tr>
+                <td class="col-num">&nbsp;</td>
+                <td class="col-desc">&nbsp;</td>
+                <td class="col-type">&nbsp;</td>
+                <td class="col-qty">&nbsp;</td>
+                <td class="col-rate">&nbsp;</td>
+                <td class="col-amt">&nbsp;</td>
+            </tr>
+            
+            <tr>
+                <td class="col-num">&nbsp;</td>
+                <td class="col-desc">&nbsp;</td>
+                <td class="col-type">&nbsp;</td>
+                <td class="col-qty">&nbsp;</td>
+                <td class="col-rate">&nbsp;</td>
+                <td class="col-amt">&nbsp;</td>
+            </tr>
+            
+            <tr>
+                <td class="col-num">&nbsp;</td>
+                <td class="col-desc">&nbsp;</td>
+                <td class="col-type">&nbsp;</td>
+                <td class="col-qty">&nbsp;</td>
+                <td class="col-rate">&nbsp;</td>
+                <td class="col-amt">&nbsp;</td>
+            </tr>
+            
+        </tbody>
+    </table>
+
+    
+    <div class="pf-bottom">
+
+        
+        <div class="pf-bottom-left">
+            
+            <div class="pf-terms-title">Terms &amp; Conditions</div>
+            <div class="pf-terms-body">This sales order is subject to the standard terms and conditions of Arab App.
+Delivery will be made within 7 working days from the date of order confirmation.
+Payment terms: 50% advance, 50% upon delivery.
+Prices are inclusive of installation and configuration.</div>
+            <hr class="pf-divider-thin">
+            
+
+            
+        </div>
+
+        
+        <div class="pf-bottom-right">
+            <table class="pf-totals-table">
+                <tr>
+                    <td class="lbl">Subtotal (Excl. VAT)</td>
+                    <td class="amt">SAR 29,499.00</td>
+                </tr>
+                
+                
+                <tr>
+                    <td class="lbl">Total VAT</td>
+                    <td class="amt">SAR 4,424.85</td>
+                </tr>
+                
+                
+                
+                <tr class="pf-totals-grand">
+                    <td>Grand Total</td>
+                    <td style="text-align:right;">SAR 33,923.85</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    
+    <div class="pf-footer">
+        <div class="pf-footer-cell">
+            <strong>Arab App</strong>
+            Riyadh, Kingdom Of Saudi Arabia
+        </div>
+        
+        <div class="pf-footer-cell">
+            <strong>VAT No.</strong>
+            310175397400003
+        </div>
+        
+        
+        <div class="pf-footer-cell">
+            <strong>Email</strong>
+            majed.dendini@arabapp.com.sa
+        </div>
+        
+        
+        <div class="pf-footer-cell">
+            <strong>Contact</strong>
+            +966 56 927 5518
+        </div>
+        
+    </div>
+
+</div>

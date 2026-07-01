@@ -1,0 +1,102 @@
+{
+  "doc": {
+    "company": "Arab App",
+    "letter_head": "Arab App Letter Head",
+    "transaction_date": "2026-04-01",
+    "valid_till": "2026-04-30",
+    "name": "QTN-2026-00045",
+    "currency": "SAR",
+    "quotation_to": "Customer",
+    "party_name": "Intelligent Productivity Co",
+    "customer_name": "شركة الإنتاجية الذكية لتقنية المعلومات",
+    "customer_address": "CUST-ADDR-001",
+    "net_total": 45000.00,
+    "total_taxes_and_charges": 6750.00,
+    "grand_total": 51750.00,
+    "terms": "This quotation is valid for 30 days from the date of issue.\nPrices are inclusive of delivery to the customer's premises.\nInstallation charges are billed separately unless stated.\nAll software licenses are subject to vendor terms.\nPayment: 50% advance, 50% on delivery.",
+    "items": [
+      {
+        "idx": 1,
+        "item_code": "CISCO-SW-001",
+        "item_name": "Cisco Catalyst 9200 Series Switch",
+        "description": "48-port PoE+ managed switch with full stack support",
+        "item_group": "Hardware",
+        "qty": 3,
+        "uom": "Nos",
+        "rate": 8500.00,
+        "amount": 25500.00
+      },
+      {
+        "idx": 2,
+        "item_code": "PALO-FW-001",
+        "item_name": "Palo Alto PA-820 Firewall",
+        "description": "Enterprise firewall with Threat Prevention subscription",
+        "item_group": "Hardware",
+        "qty": 1,
+        "uom": "Nos",
+        "rate": 12000.00,
+        "amount": 12000.00
+      },
+      {
+        "idx": 3,
+        "item_code": "SVC-NET-001",
+        "item_name": "Network Design & Implementation",
+        "description": "Full network architecture design, implementation and testing",
+        "item_group": "Services",
+        "qty": 1,
+        "uom": "Nos",
+        "rate": 7500.00,
+        "amount": 7500.00
+      }
+    ],
+    "taxes": [
+      {
+        "description": "VAT 15%",
+        "tax_amount": 6750.00
+      }
+    ]
+  },
+  "linked_docs": {
+    "Letter Head": {
+      "Arab App Letter Head": {
+        "image": "",
+        "content": ""
+      }
+    },
+    "Company": {
+      "Arab App": {
+        "company_address": "COMP-ADDR-001",
+        "phone_no": "+966 56 927 5518",
+        "email": "sales@arabapp.com.sa",
+        "tax_id": "310175397400003",
+        "city": "Riyadh, Kingdom Of Saudi Arabia"
+      }
+    },
+    "Address": {
+      "COMP-ADDR-001": {
+        "address_line1": "Riyadh",
+        "city": "Riyadh",
+        "state": "Riyadh Region",
+        "county": "7037202760"
+      },
+      "CUST-ADDR-001": {
+        "address_line1": "Al Olaya District",
+        "city": "Riyadh",
+        "state": "Riyadh Region",
+        "phone": "+966 55 123 4567",
+        "email_id": "it@company.sa"
+      }
+    },
+    "Customer": {
+      "Intelligent Productivity Co": {
+        "tax_id": "311234567800003",
+        "custom_cr_number": "1009184064"
+      }
+    },
+    "Bank Account": {}
+  },
+  "db_values": {
+    "Company::Arab App::default_letter_head": "Arab App Letter Head",
+    "Customer::Intelligent Productivity Co::custom_cr_number": "1009184064"
+  }
+}

@@ -8,6 +8,12 @@ app_license = "mit"
 # Apps are automatically synced on installation or 'bench migrate'.
 # All standard print formats included in this app will be created/updated in the database.
 
+jinja = {
+	"methods": [
+		"print_pro.utils.get_file_data_url",
+	]
+}
+
 # Integration
 # If you want to automatically link print formats to specific DocTypes or set defaults,
 # you can use 'after_install' or 'after_sync' hooks.
